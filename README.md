@@ -56,8 +56,3 @@ Private Coverage:
 • Medicaid: Medicaid, the Children’s Health Insurance Program (CHIP), and individual state health plans.
 • CHAMPVA or VA: Civilian Health and Medical Program of the Department of Veterans Affairs, as well as care provided by the Department of Veterans Affairs and the military
 
-III. Proposed Analysis	
-
-We plan to generate different linear regression models based on the unemployment rate and regional characteristics over the years. Furthermore, we want to see how the unemployment rate affects the shares of each insurance type. We will choose the best linear regression with the smallest RMSE. Overall, it will help us and the government analyze whether the unemployment rate and the insurance ratio are highly correlated, because the news "The uninsured rate had been steadily declining for a decade. But now it is rising again." mentioned "The increase in the number of "Uninsured is surprising because the US economy has been relatively strong and unemployment has remained low.", but no relevant data details are provided. Therefore, this analysis can give support or refute for this news.
-
-News source: https://www.vox.com/policy-and-politics/2019/9/10/20858938/health-insurance-census-bureau-data-trump?fbclid=IwAR2s1_ur8ElTtcGjPHKl1zN7D0slSoTbLggHBFRR8X-awwF_YLCJIgvn
