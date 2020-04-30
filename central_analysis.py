@@ -48,7 +48,11 @@ def read_unemployment_by_year(start_year: int, end_year: int) -> pd.DataFrame:
     State_total_percentages_only_flipped.index.names = ['Years']
     State_total_percentages_only_flipped.plot(figsize=(32, 18))
     plt.show()
-    return State_total_percentages_only_flipped
+
+    unemployment_perc_mergeable = State_total_percentages_only_flipped.reset_index().astype({'Years': 'int32'})
+    unemployment_perc_mergeable.columns = unemployment_perc_mergeable.columns.str.replace(' ', '')
+
+    return unemployment_perc_mergeable
 
 def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_type: str) -> pd.DataFrame:
     # This function is made for the HIC-4. Health Insurance Coverage Status and Type of Coverage by State--All Persons files
@@ -82,6 +86,7 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
     for i in range(end_year - start_year + 1):
         iloc_column_num_list.append((i+1)*4)
 
+    # The original Excel file is
     hc_converage_estimate_percentages_only = hc_converage.iloc[0:, iloc_column_num_list]
 
     # Inspect only the "Uninsured" percentage, including a nationwide one
@@ -110,110 +115,110 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
     plt.xlabel('Years', fontsize='xx-large')
     plt.ylabel('Percentage of People: ' + coverage_type, fontsize='xx-large')
     plt.show()
-    return hc_uninsured_perc_flipped
 
+    # Also converting all state names to their abbreviated forms for convenience
+    # Conversion standard referenced from: https://gist.github.com/mshafrir/2646763
+    hc_uninsured_perc_mergeable = hc_uninsured_perc_flipped.rename(columns={
+        "UNITED STATES": "USA",
+        "ALABAMA": "AL",
+        "ALASKA": "AK",
+        "ARIZONA": "AZ",
+        "ARKANSAS": "AR",
+        "CALIFORNIA": "CA",
+        "COLORADO": "CO",
+        "CONNECTICUT": "CT",
+        "DELAWARE": "DE",
+        "DISTRICT OF COLUMBIA": "DC",
+        "FLORIDA": "FL",
+        "GEORGIA": "GA",
+        "GU": "Guam",
+        "HAWAII": "HI",
+        "IDAHO": "ID",
+        "ILLINOIS": "IL",
+        "INDIANA": "IN",
+        "IOWA": "IA",
+        "KANSAS": "KS",
+        "KENTUCKY": "KY",
+        "LOUISIANA": "LA",
+        "MAINE": "ME",
+        "MARYLAND": "MD",
+        "MASSACHUSETTS": "MA",
+        "MICHIGAN": "MI",
+        "MINNESOTA": "MN",
+        "MISSISSIPPI": "MS",
+        "MISSOURI": "MO",
+        "MONTANA": "MT",
+        "NEBRASKA": "NE",
+        "NEVADA": "NV",
+        "NEW HAMPSHIRE": "NH",
+        "NEW JERSEY": "NJ",
+        "NEW MEXICO": "NM",
+        "NEW YORK": "NY",
+        "NORTH CAROLINA": "NC",
+        "NORTH DAKOTA": "ND",
+        "OHIO": "OH",
+        "OKLAHOMA": "OK",
+        "OREGON": "OR",
+        "PENNSYLVANIA": "PA",
+        "RHODE ISLAND": "RI",
+        "SOUTH CAROLINA": "SC",
+        "SOUTH DAKOTA": "SD",
+        "TENNESSEE": "TN",
+        "TEXAS": "TX",
+        "UTAH": "UT",
+        "VERMONT": "VT",
+        "VIRGINIA": "VA",
+        "WASHINGTON": "WA",
+        "WEST VIRGINIA": "WV",
+        "WISCONSIN": "WI",
+        "WYOMING": "WY"})
+    # Converts rates into float64 so correlations can be drawn
+    for each in hc_uninsured_perc_mergeable.columns:
+        if hc_uninsured_perc_mergeable[each].dtype == 'object':
+            hc_uninsured_perc_mergeable = hc_uninsured_perc_mergeable.astype({each: 'float64'})
 
-### PART 2: hc_coverage |  To-be-converted to .py
+    hc_uninsured_perc_mergeable = hc_uninsured_perc_mergeable.drop(['USA'], axis=1)
+    return hc_uninsured_perc_mergeable
+
+# PART 3: Merging dataframes and obtain correlations |  To-be-converted to .py
+def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dataframe_2: pd.DataFrame)-> pd.DataFrame:
+    """
+    :param dataframe_1: A pandas dataframe with a "Years" (int32) denoting years in the Solar Calendar format, and statistics (float64) for each state in U.S.A. using state codes (IL, TX, VA, etc.)
+    :param dataframe_2: Another pandas dataframe with an exact same structure as dataframe_1.
+    :return: A merged dataframe with columns from both input dataframes.
+    """
+
+    # Allocate the 2 dataframes to a location in memory with suffixes to differentiate their columns pointing to the same years
+    dataframe_1 = dataframe_1.reset_index().add_suffix('_df1')
+    dataframe_2 = dataframe_2.reset_index().add_suffix('_df2')
+
+    dataframe_merged = pd.merge(dataframe_1, dataframe_2,  left_on = "Years_df1", right_on = "Years_df2")
+
+    # Lists out columns from both dataframes
+    df1_cols = [col for col in dataframe_merged.columns if '_df1' in col]
+    df2_cols = [col for col in dataframe_merged.columns if '_df2' in col]
+
+    # Then, iterates through each states where columns of same states match. Prints outs the correlation value for each state
+    for each_df1_col in df1_cols:
+        for each_df2_col in df2_cols:
+            if each_df1_col[0:2] == each_df2_col[0:2]:
+                print(each_df1_col[0:2], "Correlation:", dataframe_merged[each_df1_col].corr(dataframe_merged[each_df2_col]))
+
+    return dataframe_merged
 
 def main_test():
-    # test_df_un = read_unemployment_by_year(2008, 2018)
-    # print(test_df_un)
+    test_df_un = read_unemployment_by_year(2008, 2018)
+    #print(test_df_un)
+    #print(test_df_un.dtypes)
 
-    test_df_hc = read_health_care_coverage_by_year(2008, 2018, 'Uninsured')
-    print(test_df_hc)
+    test_df_hc = read_health_care_coverage_by_year(2008, 2018, 'Private')
+    #print(test_df_hc)
+    #print(test_df_hc.dtypes)
+    merging_dataframes_on_years_plus_correlations(test_df_un, test_df_hc)
 
 main_test()
 
-# PART 3: Merging dataframes and obtain correlations |  To-be-converted to .py
-"""
-# State-wise unemployment rates
-unemployment_perc_mergeable = State_total_percentages_only_flipped.reset_index().astype(
-    {'Years': 'int32'}).add_suffix('_unemployment')
 
-# State-wise uninsured rates
-# Also converting all state names to their abbreviated forms for convenience
-# Conversion standard referenced from: https://gist.github.com/mshafrir/2646763
-hc_uninsured_perc_mergeable = hc_uninsured_perc_flipped.rename(columns={
-    "UNITED STATES": "USA",
-    "ALABAMA": "AL",
-    "ALASKA": "AK",
-    "ARIZONA": "AZ",
-    "ARKANSAS": "AR",
-    "CALIFORNIA": "CA",
-    "COLORADO": "CO",
-    "CONNECTICUT": "CT",
-    "DELAWARE": "DE",
-    "DISTRICT OF COLUMBIA": "DC",
-    "FLORIDA": "FL",
-    "GEORGIA": "GA",
-    "GU": "Guam",
-    "HAWAII": "HI",
-    "IDAHO": "ID",
-    "ILLINOIS": "IL",
-    "INDIANA": "IN",
-    "IOWA": "IA",
-    "KANSAS": "KS",
-    "KENTUCKY": "KY",
-    "LOUISIANA": "LA",
-    "MAINE": "ME",
-    "MARYLAND": "MD",
-    "MASSACHUSETTS": "MA",
-    "MICHIGAN": "MI",
-    "MINNESOTA": "MN",
-    "MISSISSIPPI": "MS",
-    "MISSOURI": "MO",
-    "MONTANA": "MT",
-    "NEBRASKA": "NE",
-    "NEVADA": "NV",
-    "NEW HAMPSHIRE": "NH",
-    "NEW JERSEY": "NJ",
-    "NEW MEXICO": "NM",
-    "NEW YORK": "NY",
-    "NORTH CAROLINA": "NC",
-    "NORTH DAKOTA": "ND",
-    "OHIO": "OH",
-    "OKLAHOMA": "OK",
-    "OREGON": "OR",
-    "PENNSYLVANIA": "PA",
-    "RHODE ISLAND": "RI",
-    "SOUTH CAROLINA": "SC",
-    "SOUTH DAKOTA": "SD",
-    "TENNESSEE": "TN",
-    "TEXAS": "TX",
-    "UTAH": "UT",
-    "VERMONT": "VT",
-    "VIRGINIA": "VA",
-    "WASHINGTON": "WA",
-    "WEST VIRGINIA": "WV",
-    "WISCONSIN": "WI",
-    "WYOMING": "WY"}).add_suffix('_uninsured')
-
-# Merged dataframe with suffixes to differentiate
-unem_unin_merged = pd.merge(hc_uninsured_perc_mergeable, unemployment_perc_mergeable, left_on='Years_uninsured', right_on='Years_unemployment').drop(['Years_unemployment'], axis = 1)
-unem_unin_merged = unem_unin_merged.rename(columns={"Years_uninsured" : "Years"})
-unem_unin_merged
-
-#%%
-
-#for each_column in unem_unin_merged:
-#    print(each_column)
-
-# Lists out columns that describe uninsurted percentages. The first one is nationwide (USA_uninsured) and so it is temporarily removed through slicing
-uninsured_cols = [col for col in unem_unin_merged.columns if 'uninsured' in col]
-unemployment_cols = [col for col in unem_unin_merged.columns if 'unemployment' in col]
-
-# First, convers uninsured rates into float64 so correlations can be drawn
-for each in uninsured_cols:
-    unem_unin_merged = unem_unin_merged.astype({each: 'float64'})
-
-# Then, iterates through each states where uninsured rate and unemployment columns match. Prints outs the correlation value
-for each_uni in uninsured_cols[1:]:
-    for each_une in unemployment_cols:
-        if each_uni[0:2] == each_une[1:3]:
-            print(each_uni[0:2], "Correlation:", unem_unin_merged[each_uni].corr(unem_unin_merged[each_une]))
-
-
-"""
 
 
 
