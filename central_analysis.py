@@ -12,6 +12,64 @@ import scipy.cluster
 from pandas.io.json import json_normalize
 
 
+states_and_their_abbreviations = {
+        "UNITED STATES": "USA",
+        "ALABAMA": "AL",
+        "ALASKA": "AK",
+        "ARIZONA": "AZ",
+        "ARKANSAS": "AR",
+        "CALIFORNIA": "CA",
+        "COLORADO": "CO",
+        "CONNECTICUT": "CT",
+        "DELAWARE": "DE",
+        "DISTRICT OF COLUMBIA": "DC",
+        "D.C." :"DC",
+        "FLORIDA": "FL",
+        "GEORGIA": "GA",
+        "GU": "Guam",
+        "HAWAII": "HI",
+        "IDAHO": "ID",
+        "ILLINOIS": "IL",
+        "INDIANA": "IN",
+        "IOWA": "IA",
+        "KANSAS": "KS",
+        "KENTUCKY": "KY",
+        "LOUISIANA": "LA",
+        "MAINE": "ME",
+        "MARYLAND": "MD",
+        "MASSACHUSETTS": "MA",
+        "MICHIGAN": "MI",
+        "MINNESOTA": "MN",
+        "MISSISSIPPI": "MS",
+        "MISSOURI": "MO",
+        "MONTANA": "MT",
+        "NEBRASKA": "NE",
+        "NEVADA": "NV",
+        "NEW HAMPSHIRE": "NH",
+        "NEW JERSEY": "NJ",
+        "NEW MEXICO": "NM",
+        "NEW YORK": "NY",
+        "NORTH CAROLINA": "NC",
+        "NORTH DAKOTA": "ND",
+        "OHIO": "OH",
+        "OKLAHOMA": "OK",
+        "OREGON": "OR",
+        "PENNSYLVANIA": "PA",
+        "RHODE ISLAND": "RI",
+        "SOUTH CAROLINA": "SC",
+        "SOUTH DAKOTA": "SD",
+        "TENNESSEE": "TN",
+        "TEXAS": "TX",
+        "UTAH": "UT",
+        "VERMONT": "VT",
+        "VIRGINIA": "VA",
+        "WASHINGTON": "WA",
+        "WEST VIRGINIA": "WV",
+        "WISCONSIN": "WI",
+        "WYOMING": "WY",
+        "YEARS" :"Years"}
+
+
 def read_unemployment_by_year(start_year: int, end_year: int) -> pd.DataFrame:
     """
     :param start_year: The first year of the dataframe read in from the Unemployment Data 'Un.xlsx'. No data exists before year 2008, so this number should be 2008 at minimum.
@@ -118,91 +176,83 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
 
     # Also converting all state names to their abbreviated forms for convenience
     # Conversion standard referenced from: https://gist.github.com/mshafrir/2646763
-    hc_uninsured_perc_mergeable = hc_uninsured_perc_flipped.rename(columns={
-        "UNITED STATES": "USA",
-        "ALABAMA": "AL",
-        "ALASKA": "AK",
-        "ARIZONA": "AZ",
-        "ARKANSAS": "AR",
-        "CALIFORNIA": "CA",
-        "COLORADO": "CO",
-        "CONNECTICUT": "CT",
-        "DELAWARE": "DE",
-        "DISTRICT OF COLUMBIA": "DC",
-        "FLORIDA": "FL",
-        "GEORGIA": "GA",
-        "GU": "Guam",
-        "HAWAII": "HI",
-        "IDAHO": "ID",
-        "ILLINOIS": "IL",
-        "INDIANA": "IN",
-        "IOWA": "IA",
-        "KANSAS": "KS",
-        "KENTUCKY": "KY",
-        "LOUISIANA": "LA",
-        "MAINE": "ME",
-        "MARYLAND": "MD",
-        "MASSACHUSETTS": "MA",
-        "MICHIGAN": "MI",
-        "MINNESOTA": "MN",
-        "MISSISSIPPI": "MS",
-        "MISSOURI": "MO",
-        "MONTANA": "MT",
-        "NEBRASKA": "NE",
-        "NEVADA": "NV",
-        "NEW HAMPSHIRE": "NH",
-        "NEW JERSEY": "NJ",
-        "NEW MEXICO": "NM",
-        "NEW YORK": "NY",
-        "NORTH CAROLINA": "NC",
-        "NORTH DAKOTA": "ND",
-        "OHIO": "OH",
-        "OKLAHOMA": "OK",
-        "OREGON": "OR",
-        "PENNSYLVANIA": "PA",
-        "RHODE ISLAND": "RI",
-        "SOUTH CAROLINA": "SC",
-        "SOUTH DAKOTA": "SD",
-        "TENNESSEE": "TN",
-        "TEXAS": "TX",
-        "UTAH": "UT",
-        "VERMONT": "VT",
-        "VIRGINIA": "VA",
-        "WASHINGTON": "WA",
-        "WEST VIRGINIA": "WV",
-        "WISCONSIN": "WI",
-        "WYOMING": "WY"})
+    hc_uninsured_perc_mergeable = hc_uninsured_perc_flipped.rename(columns=states_and_their_abbreviations)
     # Converts rates into float64 so correlations can be drawn
     for each in hc_uninsured_perc_mergeable.columns:
         if hc_uninsured_perc_mergeable[each].dtype == 'object':
             hc_uninsured_perc_mergeable = hc_uninsured_perc_mergeable.astype({each: 'float64'})
 
-    hc_uninsured_perc_mergeable = hc_uninsured_perc_mergeable.drop(['USA'], axis=1)
+    # hc_uninsured_perc_mergeable = hc_uninsured_perc_mergeable.drop(['USA'], axis=1)
     return hc_uninsured_perc_mergeable
 
-# PART 3: Merging dataframes and obtain correlations |  To-be-converted to .py
-def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dataframe_2: pd.DataFrame)-> pd.DataFrame:
+def read_household_income_by_year(start_year: int, end_year: int) -> pd.DataFrame:
+    """
+    :param start_year: The first year where the output dataframe will have. Should be 1984 minimum.
+    :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
+    :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
+    """
+    if start_year < 1984 or end_year > 2018 or end_year < start_year:
+        print("Botched year formats!! Check input values!")
+        return None
+
+    df = pd.read_excel('Household Income.xls')
+    df_flipped = df.transpose().reset_index()
+    df_flipped.columns = df_flipped.iloc[0]
+    df_flipped = df_flipped.rename({'States': 'Years'}, axis=1)
+    df_flipped = df_flipped[1:].iloc[::-1].reset_index().drop(['index'], axis=1)
+    df_flipped = df_flipped.astype({"Years": 'int32'})
+    # Note to self: For Pandas, the "AND" condition is denoted by "&" not "and"
+    df_flipped = df_flipped.loc[(df_flipped['Years'] >= start_year) & (df_flipped['Years'] <= end_year)]
+    # For some reason, this dataframe's Years are sorted in descending order. It does not impede merging with other frames, but an ascending sort is left here just in case.
+    # df_flipped = df_flipped.sort_values(by='Years', ascending=True)
+
+    # Plotting
+    plt.figure(figsize=(24, 13))
+    plt.plot('Years', 'United States', data=df_flipped, marker='*', color='#4832a8', linewidth=5)
+    for each_state in df_flipped.columns[2:]:
+        plt.plot('Years', each_state, data=df_flipped, marker='p', markersize=2,
+                 color=(random.random(), random.random(), random.random()), linewidth=1)
+    plt.legend()
+    plt.xlabel('Years', fontsize='xx-large')
+    plt.ylabel('Household Income (USD)', fontsize='xx-large')
+    plt.show()
+
+    # Transforming the dataframe column names to adhere to the same format as other methods
+    df_flipped.columns = df_flipped.columns.str.upper()
+    df_flipped = df_flipped.rename(columns=states_and_their_abbreviations)
+
+    # Type casting to make the dataframe returned more mergeable with others
+    for each in df_flipped.columns:
+        if df_flipped[each].dtype == 'object':
+            df_flipped = df_flipped.astype({each: 'float64'})
+
+    return df_flipped
+
+def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dataframe_2: pd.DataFrame, suffix_1: str, suffix_2: str)-> pd.DataFrame:
     """
     :param dataframe_1: A pandas dataframe with a "Years" (int32) denoting years in the Solar Calendar format, and statistics (float64) for each state in U.S.A. using state codes (IL, TX, VA, etc.)
     :param dataframe_2: Another pandas dataframe with an exact same structure as dataframe_1.
-    :return: A merged dataframe with columns from both input dataframes.
+    :param suffix_1: Suffixes to add to columns from dataframe_1.
+    :param suffix_2: Suffixes to add to columns from dataframe_2.
+    :return: A merged dataframe with columns from both input dataframes. Because the join type is inner, only years which both dataframe contain will be left.
     """
 
     # Allocate the 2 dataframes to a location in memory with suffixes to differentiate their columns pointing to the same years
-    dataframe_1 = dataframe_1.reset_index().add_suffix('_df1')
-    dataframe_2 = dataframe_2.reset_index().add_suffix('_df2')
+    dataframe_1 = dataframe_1.reset_index().add_suffix('_'  + suffix_1)
+    dataframe_2 = dataframe_2.reset_index().add_suffix('_'  + suffix_2)
 
-    dataframe_merged = pd.merge(dataframe_1, dataframe_2,  left_on = "Years_df1", right_on = "Years_df2")
+    dataframe_merged = pd.merge(dataframe_1, dataframe_2,  left_on = "Years" + '_'  + suffix_1, right_on = "Years" + '_'  + suffix_2, how='inner')
 
     # Lists out columns from both dataframes
-    df1_cols = [col for col in dataframe_merged.columns if '_df1' in col]
-    df2_cols = [col for col in dataframe_merged.columns if '_df2' in col]
+    df1_cols = [col for col in dataframe_merged.columns if '_'  + suffix_1 in col and "Years" not in col and "index" not in col]
+    df2_cols = [col for col in dataframe_merged.columns if '_'  + suffix_2 in col and "Years" not in col and "index" not in col]
 
     # Then, iterates through each states where columns of same states match. Prints outs the correlation value for each state
+    print(suffix_1, "&", suffix_2, "Correlations:")
     for each_df1_col in df1_cols:
         for each_df2_col in df2_cols:
             if each_df1_col[0:2] == each_df2_col[0:2]:
-                print(each_df1_col[0:2], "Correlation:", dataframe_merged[each_df1_col].corr(dataframe_merged[each_df2_col]))
+                print(each_df1_col[0:2], dataframe_merged[each_df1_col].corr(dataframe_merged[each_df2_col]))
 
     return dataframe_merged
 
@@ -211,11 +261,15 @@ def main_test():
     #print(test_df_un)
     #print(test_df_un.dtypes)
 
-    test_df_hc = read_health_care_coverage_by_year(2008, 2018, 'Private')
+    test_df_hc = read_health_care_coverage_by_year(2008, 2017, 'Public')
     #print(test_df_hc)
     #print(test_df_hc.dtypes)
-    merging_dataframes_on_years_plus_correlations(test_df_un, test_df_hc)
 
+    test_df_hh_ic = read_household_income_by_year(1991, 2015)
+    #print(test_df_hh_ic)
+
+    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_hh_ic, "Public HealthCare Coverage", "HouseHold Income")
+    # print(test_df_merged)
 main_test()
 
 
