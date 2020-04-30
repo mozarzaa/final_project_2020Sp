@@ -228,12 +228,14 @@ def read_household_income_by_year(start_year: int, end_year: int) -> pd.DataFram
 
     return df_flipped
 
-def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dataframe_2: pd.DataFrame, suffix_1: str, suffix_2: str)-> pd.DataFrame:
+def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dataframe_2: pd.DataFrame, suffix_1: str, suffix_2: str, compare_growth_rate: bool)-> pd.DataFrame:
     """
     :param dataframe_1: A pandas dataframe with a "Years" (int32) denoting years in the Solar Calendar format, and statistics (float64) for each state in U.S.A. using state codes (IL, TX, VA, etc.)
     :param dataframe_2: Another pandas dataframe with an exact same structure as dataframe_1.
     :param suffix_1: Suffixes to add to columns from dataframe_1.
     :param suffix_2: Suffixes to add to columns from dataframe_2.
+    :param compare_growth_rate: This boolean value decides whether the correlation will be drawn between the percentage changes of values from both dataframes.
+    Setting this to 'False' makes the program draw correlations over raw values, which might overestimate the correlations.
     :return: A merged dataframe with columns from both input dataframes. Because the join type is inner, only years which both dataframe contain will be left.
     """
 
@@ -248,11 +250,18 @@ def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dat
     df2_cols = [col for col in dataframe_merged.columns if '_'  + suffix_2 in col and "Years" not in col and "index" not in col]
 
     # Then, iterates through each states where columns of same states match. Prints outs the correlation value for each state
-    print(suffix_1, "&", suffix_2, "Correlations:")
+    if compare_growth_rate:
+        print(suffix_1, "&", suffix_2, "Correlations w/ growth rates:")
+    else:
+        print(suffix_1, "&", suffix_2, "Correlations w/ raw values:")
     for each_df1_col in df1_cols:
         for each_df2_col in df2_cols:
             if each_df1_col[0:2] == each_df2_col[0:2]:
-                print(each_df1_col[0:2], dataframe_merged[each_df1_col].corr(dataframe_merged[each_df2_col]))
+                if compare_growth_rate:
+                    print(each_df1_col[0:2],
+                          dataframe_merged.pct_change()[each_df1_col].corr(dataframe_merged.pct_change()[each_df2_col]))
+                else:
+                    print(each_df1_col[0:2], dataframe_merged[each_df1_col].corr(dataframe_merged[each_df2_col]))
 
     return dataframe_merged
 
@@ -265,10 +274,10 @@ def main_test():
     #print(test_df_hc)
     #print(test_df_hc.dtypes)
 
-    test_df_hh_ic = read_household_income_by_year(1991, 2015)
+    test_df_hh_ic = read_household_income_by_year(1991, 2018)
     #print(test_df_hh_ic)
 
-    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_hh_ic, "Public HealthCare Coverage", "HouseHold Income")
+    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_un, test_df_hh_ic, "Unemployment", "HouseHold Income", False)
     # print(test_df_merged)
 main_test()
 
