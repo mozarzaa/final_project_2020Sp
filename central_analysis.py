@@ -54,10 +54,10 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
     # This function is made for the HIC-4. Health Insurance Coverage Status and Type of Coverage by State--All Persons files
     # It should work on similar files as long as they are also downloaded from: https://www.census.gov/library/publications/2019/demo/p60-267.html
     """
-    :param start_year:
-    :param end_year:
+    :param start_year: The first year where the output dataframe will have. Should be 2008 minimum.
+    :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
     :param coverage_type: Can be 'Uninsured', 'Public', 'Private', '..Employer-based', '..VA Care' etc.
-    :return:
+    :return: A dataframe which describes the insurance type's coverage in all states.
     """
     if start_year < 2008 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
