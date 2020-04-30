@@ -73,11 +73,10 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
         for each_sub in each_year_sub:
             headers_for_hc_coverage_census.append(str(each) + '_' + each_sub)
 
-    # Assign headers to data
+    # Subset the dataframe according to speicified year range, then assign headers to the subset
+    hc_converage = hc_converage.iloc[:, 0: len(headers_for_hc_coverage_census)]
     hc_converage.columns = headers_for_hc_coverage_census
     hc_converage = hc_converage[hc_converage['Coverage Type'].notna()].ffill(axis=0)
-
-    iloc_column_num_list = [0, 1, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44]
 
     iloc_column_num_list = [0, 1]
     for i in range(end_year - start_year + 1):
@@ -88,20 +87,6 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
     # Inspect only the "Uninsured" percentage, including a nationwide one
     hc_uninsured_perc = hc_converage_estimate_percentages_only[
         hc_converage_estimate_percentages_only['Coverage Type'] == coverage_type]
-
-    casting_dict = {
-        '2018_Percentage': 'float64',
-        '2017_Percentage': 'float64',
-        '2016_Percentage': 'float64',
-        '2015_Percentage': 'float64',
-        '2014_Percentage': 'float64',
-        '2013_Percentage': 'float64',
-        '2012_Percentage': 'float64',
-        '2011_Percentage': 'float64',
-        '2010_Percentage': 'float64',
-        '2009_Percentage': 'float64',
-        '2008_Percentage': 'float64'
-     }
 
     casting_dict = {}
     for i in range(end_year, start_year - 1, -1):
