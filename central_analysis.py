@@ -228,14 +228,147 @@ def read_household_income_by_year(start_year: int, end_year: int) -> pd.DataFram
 
     return df_flipped
 
-def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dataframe_2: pd.DataFrame, suffix_1: str, suffix_2: str, compare_growth_rate: bool)-> pd.DataFrame:
+def read_household_income_by_year_ver2(start_year: int, end_year: int) -> pd.DataFrame:
+    """
+    :param start_year: The first year where the output dataframe will have. Should be 1984 minimum.
+    :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
+    :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
+    """
+    if start_year < 1984 or end_year > 2018 or end_year < start_year:
+        print("Botched year formats!! Check input values!")
+        return None
+
+    raw_hh_income_by_state = pd.read_excel('h08.xls')
+
+    start_row_index = 0
+    end_row_index = 0
+    max_year = 0
+    for i in range(len(raw_hh_income_by_state)):
+        if raw_hh_income_by_state.iloc[i, 0] == 'CURRENT DOLLARS':
+            start_row_index = i + 1
+            max_year = int(raw_hh_income_by_state.iloc[i + 1, 1])
+        if raw_hh_income_by_state.iloc[i, 0] == str(max_year) + ' DOLLARS':
+            end_row_index = i - 1
+
+    skiprow_list = list(range(start_row_index + 1))
+    nrow_number = end_row_index - (start_row_index + 1)
+
+    hh_income_by_state = pd.read_excel('h08.xls', skiprows=skiprow_list, nrows=nrow_number + 1)
+
+    hh_header = list(hh_income_by_state.columns)
+    hh_first_row = list(hh_income_by_state.iloc[0, :])
+    for i in range(len(hh_header)):
+        if hh_header[i] == 'State':
+            hh_header[i] = hh_header[i]
+        else:
+            if 'Unnamed' in str(hh_header[i]):
+                hh_header[i] = old_header_value
+            else:
+                old_header_value = hh_header[i]
+
+            hh_header[i] = str(hh_header[i]) + ' ' + str(hh_first_row[i]).replace('\n', ' ')
+
+    hh_income_by_state.columns = hh_header
+    hh_income_by_state = hh_income_by_state.drop(hh_income_by_state.index[0])
+
+    # hh_header
+
+    drop_list = []
+    for i in hh_header:
+        if 'Standard error' in i:
+            drop_list.append(i)
+
+    hh_income_by_state = hh_income_by_state.drop(columns=drop_list)
+    hh_income_by_state.columns = hh_income_by_state.columns.str.replace(' Median income', '')
+
+    hh_header = list(hh_income_by_state.columns)
+    year_revised_dict = {}
+    for i in hh_header:
+        if '(' in i:
+            if str(i)[0:4] in year_revised_dict:
+                if year_revised_dict[str(i)[0:4]] < str(i)[i.find('(') + 1:i.find(')')]:
+                    year_revised_dict[str(i)[0:4]] = str(i)[i.find('(') + 1:i.find(')')]
+            else:
+                year_revised_dict[str(i)[0:4]] = str(i)[i.find('(') + 1:i.find(')')]
+
+    drop_list = []
+    for i in hh_header:
+        if str(i)[0:4] in year_revised_dict and str(i)[i.find('(') + 1:i.find(')')] != year_revised_dict[str(i)[0:4]]:
+            drop_list.append(i)
+
+    hh_income_by_state = hh_income_by_state.drop(columns=drop_list)
+
+    hh_header = list(hh_income_by_state.columns)
+    for i in range(len(hh_header)):
+        if '(' in hh_header[i]:
+            hh_header[i] = str(hh_header[i])[0:4]
+    hh_income_by_state.columns = hh_header
+    hh_income_by_state = hh_income_by_state.reset_index().drop(['index'], axis=1)
+
+    # %%
+
+    # Flip Household Income dataframe
+    hh_income_by_state_flipped = hh_income_by_state.transpose().reset_index()
+    hh_income_by_state_flipped.columns = hh_income_by_state_flipped.iloc[0]
+    hh_income_by_state_flipped = hh_income_by_state_flipped.rename({'State': 'Years'}, axis=1)
+    hh_income_by_state_flipped = hh_income_by_state_flipped[1:].iloc[::-1].reset_index().drop(['index'], axis=1)
+    hh_income_by_state_flipped = hh_income_by_state_flipped.astype({"Years": 'int32'})
+    # Note to self: For Pandas, the "AND" condition is denoted by "&" not "and"
+    hh_income_by_state_flipped = hh_income_by_state_flipped.loc[(hh_income_by_state_flipped['Years'] >= start_year) & (hh_income_by_state_flipped['Years'] <= end_year)]
+    # Transforming the dataframe column names to adhere to the same format as other methods
+    hh_income_by_state_flipped.columns = hh_income_by_state_flipped.columns.str.upper()
+    hh_income_by_state_flipped = hh_income_by_state_flipped.rename(columns=states_and_their_abbreviations)
+
+    # Type casting to make the dataframe returned more mergeable with others
+    for each in hh_income_by_state_flipped.columns:
+        if hh_income_by_state_flipped[each].dtype == 'object':
+            hh_income_by_state_flipped = hh_income_by_state_flipped.astype({each: 'float64'})
+    return hh_income_by_state_flipped
+
+def read_cpi_by_year(start_year: int, end_year: int) -> pd.DataFrame:
+    """
+    :param start_year: The first year where the output dataframe will have. Should be 1935 minimum.
+    :param end_year: The last year where the output dataframe will have. Should be 2020 maximum.
+    :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
+    """
+    raw_cpi_all = pd.read_csv('cu.data.1.AllItems.txt', sep='\t')
+    raw_cpi_medical = pd.read_csv('cu.data.15.USMedical.txt', sep='\t')
+
+    cpi_all_yearly = raw_cpi_all.groupby('year').mean()
+    cpi_all_yearly = cpi_all_yearly.drop(['footnote_codes'], axis=1)
+    cpi_all_yearly = cpi_all_yearly.reset_index()
+    cpi_all_yearly.columns = cpi_all_yearly.columns.str.replace(' ', '')
+    cpi_all_yearly.columns = ['Years', 'CPI All items']
+
+    cpi_medical_yearly = raw_cpi_medical.groupby('year').mean()
+    cpi_medical_yearly = cpi_medical_yearly.drop(['footnote_codes'], axis=1)
+    cpi_medical_yearly = cpi_medical_yearly.reset_index()
+    cpi_medical_yearly.columns = cpi_medical_yearly.columns.str.replace(' ', '')
+    cpi_medical_yearly.columns = ['Years', 'CPI Medical']
+
+    cpi_merge = pd.merge(cpi_all_yearly, cpi_medical_yearly, how='inner', on='Years')
+    cpi_merge['CPI All items Growth'] = cpi_merge['CPI All items'].pct_change()
+    cpi_merge['CPI Medical Growth'] = cpi_merge['CPI Medical'].pct_change()
+    cpi_merge = cpi_merge.loc[(cpi_merge['Years'] >= start_year) & (cpi_merge['Years'] <= end_year)]
+
+    return cpi_merge
+
+
+def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dataframe_2: pd.DataFrame, suffix_1: str, suffix_2: str, compare_growth_rate: str)-> pd.DataFrame:
     """
     :param dataframe_1: A pandas dataframe with a "Years" (int32) denoting years in the Solar Calendar format, and statistics (float64) for each state in U.S.A. using state codes (IL, TX, VA, etc.)
     :param dataframe_2: Another pandas dataframe with an exact same structure as dataframe_1.
     :param suffix_1: Suffixes to add to columns from dataframe_1.
     :param suffix_2: Suffixes to add to columns from dataframe_2.
-    :param compare_growth_rate: This boolean value decides whether the correlation will be drawn between the percentage changes of values from both dataframes.
-    Setting this to 'False' makes the program draw correlations over raw values, which might overestimate the correlations.
+    :param compare_growth_rate: This value decides how the correlation will be drawn between the percentage changes of values from both dataframes.
+        'None' makes the program draw correlations between raw values, which might overestimate the correlations.
+        'First' makes it draw correlations between growth rates from the first dataframe's columns and raw values from the second.
+        'Second' makes it draw correlations between raw values from the first dataframe's columns and growth rates from the second.
+        'Both' makes it draw correlations between growth rates from both dataframe's columns.
+
+        We found the inclusion of this option necessary because we want to give users the ability to judge and choose the method which avoids common time-series-related mistakes:
+        https://www.svds.com/avoiding-common-mistakes-with-time-series/
+
     :return: A merged dataframe with columns from both input dataframes. Because the join type is inner, only years which both dataframe contain will be left.
     """
 
@@ -250,35 +383,57 @@ def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dat
     df2_cols = [col for col in dataframe_merged.columns if '_'  + suffix_2 in col and "Years" not in col and "index" not in col]
 
     # Then, iterates through each states where columns of same states match. Prints outs the correlation value for each state
-    if compare_growth_rate:
+    if compare_growth_rate == "Both":
         print(suffix_1, "&", suffix_2, "Correlations w/ growth rates:")
-    else:
+    elif compare_growth_rate == "None":
         print(suffix_1, "&", suffix_2, "Correlations w/ raw values:")
+    elif compare_growth_rate == "First":
+        print(suffix_1, " growth rate &", suffix_2, " raw value Correlations:")
+    elif compare_growth_rate == "Second":
+        print(suffix_1, " raw value &", suffix_2, " growth rate Correlations:")
+
     for each_df1_col in df1_cols:
         for each_df2_col in df2_cols:
             if each_df1_col[0:2] == each_df2_col[0:2]:
-                if compare_growth_rate:
+                if compare_growth_rate == "Both":
                     print(each_df1_col[0:2],
                           dataframe_merged.pct_change()[each_df1_col].corr(dataframe_merged.pct_change()[each_df2_col]))
-                else:
+                elif compare_growth_rate == "None":
                     print(each_df1_col[0:2], dataframe_merged[each_df1_col].corr(dataframe_merged[each_df2_col]))
+                elif compare_growth_rate == "First":
+                    print(each_df1_col[0:2], dataframe_merged.pct_change()[each_df1_col].corr(dataframe_merged[each_df2_col]))
+                elif compare_growth_rate == "Second":
+                    print(each_df1_col[0:2], dataframe_merged[each_df1_col].corr(dataframe_merged.pct_change()[each_df2_col]))
+
+    dataframe_merged = dataframe_merged.loc[:,~dataframe_merged.columns.str.startswith('index')]
 
     return dataframe_merged
 
 def main_test():
     test_df_un = read_unemployment_by_year(2008, 2018)
-    #print(test_df_un)
+    print(test_df_un)
     #print(test_df_un.dtypes)
 
-    test_df_hc = read_health_care_coverage_by_year(2008, 2017, 'Public')
-    #print(test_df_hc)
+    test_df_hc = read_health_care_coverage_by_year(2009, 2017, 'Public')
+    print(test_df_hc)
     #print(test_df_hc.dtypes)
 
-    test_df_hh_ic = read_household_income_by_year(1991, 2018)
+    #test_df_hh_ic = read_household_income_by_year(1991, 2018)
     #print(test_df_hh_ic)
+    #print(test_df_hh_ic.dtypes)
 
-    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_un, test_df_hh_ic, "Unemployment", "HouseHold Income", False)
-    # print(test_df_merged)
+    test_df_hh_ic = read_household_income_by_year_ver2(1991, 2018)
+    print(test_df_hh_ic)
+    #print(test_df_hh_ic.dtypes)
+
+    test_df_cpi = read_cpi_by_year(2003, 2020)
+    print(test_df_cpi)
+    #print(test_df_cpi.dtypes)
+
+    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_un, test_df_hh_ic, "Unemployment", "HouseHold_Income", "Second")
+    print(test_df_merged)
+    #print(test_df_merged.dtypes)
+
 main_test()
 
 
