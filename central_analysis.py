@@ -10,6 +10,8 @@ import scipy.misc
 import scipy.cluster
 
 from pandas.io.json import json_normalize
+import plotly.express as px
+import plotly.graph_objects as pgo
 
 
 states_and_their_abbreviations = {
@@ -409,30 +411,67 @@ def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dat
 
     return dataframe_merged
 
+def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plot: int, custom_title_text: str, custom_color_scale: str, custom_colorbar_title: str):
+    """
+    :param dataframe_to_plot: A dataframe with statistics by year, referencing each state in the U.S.A. using abbreviated codes ("IL", "TX", "MI", etc.)
+        Therefore, this dataframe must be a product of the functions above except merging_dataframes_on_years_plus_correlations().
+    :param year_to_plot: An integer specify which year's data from the dataframe passed in will the map be plotted using.
+    :param custom_title_text: A title to be displayed when the map is plotted.
+    :param custom_color_scale: Choice of a color theme to the user's content. This will be the title of the colorbar accompanying the map. The list of available options are as follow:
+        ['Blackbody','Bluered','Blues','Earth','Electric','Greens','Greys','Hot','Jet','Picnic','Portland','Rainbow','RdBu','Reds','Viridis','YlGnBu','YlOrRd']
+        This list is referenced from: https://community.plotly.com/t/what-colorscales-are-available-in-plotly-and-which-are-the-default/2079
+    :param custom_colorbar_title: A title for the colorbar.
+    :return: df_for_choropleth. This is a miniature dataframe created as a result of plotting the choropleth map.
+
+    **Take heed that this function in its current design plots to a local port using the user's default web browser (ex: Chrome, Firefox, etc.)**
+    """
+
+    df_for_choropleth = pd.DataFrame({'State': dataframe_to_plot.loc[dataframe_to_plot['Years'] == year_to_plot].columns[2:].tolist(),
+                                      'Value': dataframe_to_plot.loc[dataframe_to_plot['Years'] == year_to_plot].squeeze().tolist()[2:]})
+
+    fig = pgo.Figure(data=pgo.Choropleth(
+        locations=df_for_choropleth['State'],  # Spatial coordinates which is referred to using state codes contained in a pandas series.
+        z=df_for_choropleth['Value'].astype(float),  # A numeric column which serves as the color code.
+        locationmode='USA-states',  # set of locations match entries in `locations`
+        colorscale= custom_color_scale,
+        colorbar_title= custom_colorbar_title,
+    ))
+
+    fig.update_layout(
+        title_text= custom_title_text,
+        geo_scope='usa',  # This keyword is used to ensure that the plot is be created strictly within the of U.S.A region.
+    )
+
+    fig.show()
+    return df_for_choropleth
+
 def main_test():
-    test_df_un = read_unemployment_by_year(2008, 2018)
-    print(test_df_un)
+    #test_df_un = read_unemployment_by_year(2008, 2018)
+    #print(test_df_un)
     #print(test_df_un.dtypes)
 
     test_df_hc = read_health_care_coverage_by_year(2009, 2017, 'Public')
-    print(test_df_hc)
+    #print(test_df_hc)
     #print(test_df_hc.dtypes)
 
     #test_df_hh_ic = read_household_income_by_year(1991, 2018)
     #print(test_df_hh_ic)
     #print(test_df_hh_ic.dtypes)
 
-    test_df_hh_ic = read_household_income_by_year_ver2(1991, 2018)
-    print(test_df_hh_ic)
+    #test_df_hh_ic = read_household_income_by_year_ver2(1991, 2018)
+    #print(test_df_hh_ic)
     #print(test_df_hh_ic.dtypes)
 
-    test_df_cpi = read_cpi_by_year(2003, 2020)
-    print(test_df_cpi)
+    #test_df_cpi = read_cpi_by_year(2003, 2020)
+    #print(test_df_cpi)
     #print(test_df_cpi.dtypes)
 
-    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_un, test_df_hh_ic, "Unemployment", "HouseHold_Income", "Second")
-    print(test_df_merged)
+    #test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_un, test_df_hh_ic, "Unemployment", "HouseHold_Income", "Second")
+    #print(test_df_merged)
     #print(test_df_merged.dtypes)
+
+    spawn_choropleth_from_dataframe(test_df_hc, 2011, 'Public HC Coverage by state in Year 2013', 'Portland', "Coverage % by state")
+
 
 main_test()
 
