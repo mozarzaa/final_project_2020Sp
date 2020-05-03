@@ -12,7 +12,7 @@ import scipy.cluster
 from pandas.io.json import json_normalize
 import plotly.express as px
 import plotly.graph_objects as pgo
-
+import plotly.offline as pol
 
 states_and_their_abbreviations = {
         "UNITED STATES": "USA",
@@ -120,7 +120,8 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
     """
     :param start_year: The first year where the output dataframe will have. Should be 2008 minimum.
     :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
-    :param coverage_type: Can be 'Uninsured', 'Public', 'Private', '..Employer-based', '..VA Care' etc.
+    :param coverage_type: A string which allows the user to choose which type of insurance coverage to query for. Available options are as follow:
+        ['Total', 'Any coverage', 'Uninsured', 'Private', '..Employer-based', '..Direct-purchase', '..TRICARE', 'Public', '..Medicaid', '..Medicare', '..VA Care']
     :return: A dataframe which describes the insurance type's coverage in all states.
     """
     if start_year < 2008 or end_year > 2018 or end_year < start_year:
@@ -414,7 +415,7 @@ def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dat
 def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plot: int, custom_title_text: str, custom_color_scale: str, custom_colorbar_title: str):
     """
     :param dataframe_to_plot: A dataframe with statistics by year, referencing each state in the U.S.A. using abbreviated codes ("IL", "TX", "MI", etc.)
-        Therefore, this dataframe must be a product of the functions above except merging_dataframes_on_years_plus_correlations().
+        Therefore, this dataframe must be a product of the functions above except read_cpi_by_year() and merging_dataframes_on_years_plus_correlations().
     :param year_to_plot: An integer specify which year's data from the dataframe passed in will the map be plotted using.
     :param custom_title_text: A title to be displayed when the map is plotted.
     :param custom_color_scale: Choice of a color theme to the user's content. This will be the title of the colorbar accompanying the map. The list of available options are as follow:
@@ -429,6 +430,10 @@ def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plo
     df_for_choropleth = pd.DataFrame({'State': dataframe_to_plot.loc[dataframe_to_plot['Years'] == year_to_plot].columns[2:].tolist(),
                                       'Value': dataframe_to_plot.loc[dataframe_to_plot['Years'] == year_to_plot].squeeze().tolist()[2:]})
 
+    print(df_for_choropleth)
+    #TODO: Expand this function to also plot correlations by state
+    #TODO: Create a notebook to test these functions
+
     fig = pgo.Figure(data=pgo.Choropleth(
         locations=df_for_choropleth['State'],  # Spatial coordinates which is referred to using state codes contained in a pandas series.
         z=df_for_choropleth['Value'].astype(float),  # A numeric column which serves as the color code.
@@ -442,15 +447,16 @@ def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plo
         geo_scope='usa',  # This keyword is used to ensure that the plot is be created strictly within the of U.S.A region.
     )
 
-    fig.show()
+    #fig.show()
+    pol.plot(fig, filename='choropleth_file.html')
     return df_for_choropleth
 
 def main_test():
-    #test_df_un = read_unemployment_by_year(2008, 2018)
+    test_df_un = read_unemployment_by_year(2008, 2018)
     #print(test_df_un)
     #print(test_df_un.dtypes)
 
-    test_df_hc = read_health_care_coverage_by_year(2009, 2017, 'Public')
+    test_df_hc = read_health_care_coverage_by_year(2008, 2018, 'Private')
     #print(test_df_hc)
     #print(test_df_hc.dtypes)
 
@@ -470,7 +476,7 @@ def main_test():
     #print(test_df_merged)
     #print(test_df_merged.dtypes)
 
-    spawn_choropleth_from_dataframe(test_df_hc, 2011, 'Public HC Coverage by state in Year 2013', 'Portland', "Coverage % by state")
+    spawn_choropleth_from_dataframe(test_df_hc, 2011, 'Private HC Coverage Year 2011', 'Jet', "% by state")
 
 
 main_test()
