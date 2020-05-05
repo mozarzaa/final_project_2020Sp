@@ -1,0 +1,12 @@
+name: proganalytics-environment
+channels:
+  - conda-forge
+dependencies:
+  - pandas
+  - matplotlib
+  - numpy
+  - random
+  - scipy
+  - ipywidgets
+  - plotly
+  - importlib
