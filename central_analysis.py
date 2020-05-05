@@ -72,12 +72,17 @@ states_and_their_abbreviations = {
         "YEARS" :"Years"}
 
 
-def read_unemployment_by_year(start_year: int, end_year: int) -> pd.DataFrame:
+def read_unemployment_by_year(start_year: int, end_year: int, show_plot: bool) -> pd.DataFrame:
     """
     :param start_year: The first year of the dataframe read in from the Unemployment Data 'Un.xlsx'. No data exists before year 2008, so this number should be 2008 at minimum.
     :param end_year: The last year of the dataframe read in from the Unemployment Data 'Un.xlsx'. No data exists beyond year 2018, so this number should be 2018 at maximum.
+    :param show_plot: Whether the line plot will be created.
     :return: State_total_percentages_only_flipped. This is a pandas dataframe containing only total unemployment percentages in all states.
     """
+
+    #TODO: This function has a bug. Whenever the start_year is not 2008, data in the second year followed by every +3 year gets out of whack
+    #TODO: I believe this has something to do with "State_total.iloc[0:,3*i+2] / State_total.iloc[0:,3*i]*100". Whoever wrote the original will have to fix this.
+    #TODO: For now, please ONLY state start_year as 2008.
 
     if start_year < 2008 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
@@ -100,21 +105,23 @@ def read_unemployment_by_year(start_year: int, end_year: int) -> pd.DataFrame:
 
     # Find State_total['20XX_Percentage'] = State_total["20XX_Unemployed"] / State_total["20XX_Labor"]*100
     for i in range(end_year - start_year + 1):
-        State_total[f'{start_year + i}'] = State_total.iloc[0:, 3 * i + 2] / State_total.iloc[0:, 3 * i] * 100
+        State_total[f'{start_year + i}'] = (State_total.iloc[0:, 3 * i + 2] / State_total.iloc[0:, 3 * i]) * 100
     State_total_percentages_only = State_total.iloc[0:, -(end_year - start_year + 1):]
     # The same table, but flipped around
     State_total_percentages_only_flipped = State_total_percentages_only.transpose()
     State_total_percentages_only_flipped = State_total_percentages_only_flipped.rename({'State': 'Years'}, axis=1)
     State_total_percentages_only_flipped.index.names = ['Years']
-    State_total_percentages_only_flipped.plot(figsize=(32, 18))
-    plt.show()
+
+    if show_plot:
+        State_total_percentages_only_flipped.plot(figsize=(32, 18))
+        plt.show()
 
     unemployment_perc_mergeable = State_total_percentages_only_flipped.reset_index().astype({'Years': 'int32'})
     unemployment_perc_mergeable.columns = unemployment_perc_mergeable.columns.str.replace(' ', '')
 
     return unemployment_perc_mergeable
 
-def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_type: str) -> pd.DataFrame:
+def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_type: str, show_plot: bool) -> pd.DataFrame:
     # This function is made for the HIC-4. Health Insurance Coverage Status and Type of Coverage by State--All Persons files
     # It should work on similar files as long as they are also downloaded from: https://www.census.gov/library/publications/2019/demo/p60-267.html
     """
@@ -122,6 +129,7 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
     :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
     :param coverage_type: A string which allows the user to choose which type of insurance coverage to query for. Available options are as follow:
         ['Total', 'Any coverage', 'Uninsured', 'Private', '..Employer-based', '..Direct-purchase', '..TRICARE', 'Public', '..Medicaid', '..Medicare', '..VA Care']
+    :param show_plot: Whether the line plot will be created.
     :return: A dataframe which describes the insurance type's coverage in all states.
     """
     if start_year < 2008 or end_year > 2018 or end_year < start_year:
@@ -167,15 +175,16 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
     hc_uninsured_perc_flipped = hc_uninsured_perc_flipped[1:].iloc[::-1].reset_index().drop(['index'], axis=1)
     hc_uninsured_perc_flipped['Years'] = hc_uninsured_perc_flipped['Years'].str.rstrip('egatnecreP_').astype(
         {'Years': 'int'})
-    plt.figure(figsize=(24, 13))
-    plt.plot('Years', 'UNITED STATES', data=hc_uninsured_perc_flipped, marker='*', color='#4832a8', linewidth=5)
-    for each_state in hc_uninsured_perc_flipped.columns[2:]:
-        plt.plot('Years', each_state, data=hc_uninsured_perc_flipped, marker='p', markersize=2,
-                 color=(random.random(), random.random(), random.random()), linewidth=1)
-    plt.legend()
-    plt.xlabel('Years', fontsize='xx-large')
-    plt.ylabel('Percentage of People: ' + coverage_type, fontsize='xx-large')
-    plt.show()
+    if show_plot:
+        plt.figure(figsize=(24, 13))
+        plt.plot('Years', 'UNITED STATES', data=hc_uninsured_perc_flipped, marker='*', color='#4832a8', linewidth=5)
+        for each_state in hc_uninsured_perc_flipped.columns[2:]:
+            plt.plot('Years', each_state, data=hc_uninsured_perc_flipped, marker='p', markersize=2,
+                     color=(random.random(), random.random(), random.random()), linewidth=1)
+        plt.legend()
+        plt.xlabel('Years', fontsize='xx-large')
+        plt.ylabel('Percentage of People: ' + coverage_type, fontsize='xx-large')
+        plt.show()
 
     # Also converting all state names to their abbreviated forms for convenience
     # Conversion standard referenced from: https://gist.github.com/mshafrir/2646763
@@ -188,10 +197,11 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
     # hc_uninsured_perc_mergeable = hc_uninsured_perc_mergeable.drop(['USA'], axis=1)
     return hc_uninsured_perc_mergeable
 
-def read_household_income_by_year(start_year: int, end_year: int) -> pd.DataFrame:
+def read_household_income_by_year(start_year: int, end_year: int, show_plot: bool) -> pd.DataFrame:
     """
     :param start_year: The first year where the output dataframe will have. Should be 1984 minimum.
     :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
+    :param show_plot: Whether a plot will be created.
     :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
     """
     if start_year < 1984 or end_year > 2018 or end_year < start_year:
@@ -209,16 +219,17 @@ def read_household_income_by_year(start_year: int, end_year: int) -> pd.DataFram
     # For some reason, this dataframe's Years are sorted in descending order. It does not impede merging with other frames, but an ascending sort is left here just in case.
     # df_flipped = df_flipped.sort_values(by='Years', ascending=True)
 
-    # Plotting
-    plt.figure(figsize=(24, 13))
-    plt.plot('Years', 'United States', data=df_flipped, marker='*', color='#4832a8', linewidth=5)
-    for each_state in df_flipped.columns[2:]:
-        plt.plot('Years', each_state, data=df_flipped, marker='p', markersize=2,
-                 color=(random.random(), random.random(), random.random()), linewidth=1)
-    plt.legend()
-    plt.xlabel('Years', fontsize='xx-large')
-    plt.ylabel('Household Income (USD)', fontsize='xx-large')
-    plt.show()
+    if show_plot:
+        # Plotting
+        plt.figure(figsize=(24, 13))
+        plt.plot('Years', 'United States', data=df_flipped, marker='*', color='#4832a8', linewidth=5)
+        for each_state in df_flipped.columns[2:]:
+            plt.plot('Years', each_state, data=df_flipped, marker='p', markersize=2,
+                     color=(random.random(), random.random(), random.random()), linewidth=1)
+        plt.legend()
+        plt.xlabel('Years', fontsize='xx-large')
+        plt.ylabel('Household Income (USD)', fontsize='xx-large')
+        plt.show()
 
     # Transforming the dataframe column names to adhere to the same format as other methods
     df_flipped.columns = df_flipped.columns.str.upper()
@@ -237,6 +248,8 @@ def read_household_income_by_year_ver2(start_year: int, end_year: int) -> pd.Dat
     :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
     :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
     """
+    #TODO: Add a plotting feature to this function.
+
     if start_year < 1984 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
         return None
@@ -357,7 +370,7 @@ def read_cpi_by_year(start_year: int, end_year: int) -> pd.DataFrame:
     return cpi_merge
 
 
-def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dataframe_2: pd.DataFrame, suffix_1: str, suffix_2: str, compare_growth_rate: str)-> pd.DataFrame:
+def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dataframe_2: pd.DataFrame, suffix_1: str, suffix_2: str, compare_growth_rate: str, show_corr: bool, show_plot: bool)-> pd.DataFrame:
     """
     :param dataframe_1: A pandas dataframe with a "Years" (int32) denoting years in the Solar Calendar format, and statistics (float64) for each state in U.S.A. using state codes (IL, TX, VA, etc.)
     :param dataframe_2: Another pandas dataframe with an exact same structure as dataframe_1.
@@ -372,6 +385,8 @@ def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dat
         We found the inclusion of this option necessary because we want to give users the ability to judge and choose the method which avoids common time-series-related mistakes:
         https://www.svds.com/avoiding-common-mistakes-with-time-series/
 
+    :param show_corr: Whether to print the correlations (into console and/or ipynb cell)
+    :param show_plot: Whether to plot the correlations.
     :return: A merged dataframe with columns from both input dataframes. Because the join type is inner, only years which both dataframe contain will be left.
     """
 
@@ -395,24 +410,44 @@ def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dat
     elif compare_growth_rate == "Second":
         print(suffix_1, " raw value &", suffix_2, " growth rate Correlations:")
 
+    correlation_data = {}
+
     for each_df1_col in df1_cols:
         for each_df2_col in df2_cols:
             if each_df1_col[0:2] == each_df2_col[0:2]:
                 if compare_growth_rate == "Both":
-                    print(each_df1_col[0:2],
-                          dataframe_merged.pct_change()[each_df1_col].corr(dataframe_merged.pct_change()[each_df2_col]))
+                    #print(each_df1_col[0:2],
+                    #      dataframe_merged.pct_change()[each_df1_col].corr(dataframe_merged.pct_change()[each_df2_col]))
+                    correlation_data.update({each_df1_col[0:2]: dataframe_merged.pct_change()[each_df1_col].corr(dataframe_merged.pct_change()[each_df2_col])})
                 elif compare_growth_rate == "None":
-                    print(each_df1_col[0:2], dataframe_merged[each_df1_col].corr(dataframe_merged[each_df2_col]))
+                    #print(each_df1_col[0:2], dataframe_merged[each_df1_col].corr(dataframe_merged[each_df2_col]))
+                    correlation_data.update({each_df1_col[0:2]: dataframe_merged[each_df1_col].corr(dataframe_merged[each_df2_col])})
                 elif compare_growth_rate == "First":
-                    print(each_df1_col[0:2], dataframe_merged.pct_change()[each_df1_col].corr(dataframe_merged[each_df2_col]))
+                    #print(each_df1_col[0:2], dataframe_merged.pct_change()[each_df1_col].corr(dataframe_merged[each_df2_col]))
+                    correlation_data.update({each_df1_col[0:2]: dataframe_merged.pct_change()[each_df1_col].corr(dataframe_merged[each_df2_col])})
                 elif compare_growth_rate == "Second":
-                    print(each_df1_col[0:2], dataframe_merged[each_df1_col].corr(dataframe_merged.pct_change()[each_df2_col]))
+                    #print(each_df1_col[0:2], dataframe_merged[each_df1_col].corr(dataframe_merged.pct_change()[each_df2_col]))
+                    correlation_data.update({each_df1_col[0:2]: dataframe_merged[each_df1_col].corr(dataframe_merged.pct_change()[each_df2_col])})
+
+    if show_corr:
+        for key, value in correlation_data.items():
+            print(key, ' : ', value)
+
+    if show_plot:
+        plt.figure(figsize=(24, 13))
+        plt.title(suffix_1 + "&" + suffix_2 + "Correlations")
+        plt.xlabel("State")
+        plt.ylabel("Correlation Value")
+        plt.bar(range(len(correlation_data)), list(correlation_data.values()), align='edge', width=0.7, color='rgbkymc')
+        plt.xticks(range(len(correlation_data)), list(correlation_data.keys()),  color='darkgreen')
+        plt.xticks(rotation=90)
+        plt.show()
 
     dataframe_merged = dataframe_merged.loc[:,~dataframe_merged.columns.str.startswith('index')]
 
     return dataframe_merged
 
-def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plot: int, custom_title_text: str, custom_color_scale: str, custom_colorbar_title: str):
+def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plot: int, custom_title_text: str, custom_color_scale: str, custom_colorbar_title: str, using_ipynb: bool):
     """
     :param dataframe_to_plot: A dataframe with statistics by year, referencing each state in the U.S.A. using abbreviated codes ("IL", "TX", "MI", etc.)
         Therefore, this dataframe must be a product of the functions above except read_cpi_by_year() and merging_dataframes_on_years_plus_correlations().
@@ -422,6 +457,7 @@ def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plo
         ['Blackbody','Bluered','Blues','Earth','Electric','Greens','Greys','Hot','Jet','Picnic','Portland','Rainbow','RdBu','Reds','Viridis','YlGnBu','YlOrRd']
         This list is referenced from: https://community.plotly.com/t/what-colorscales-are-available-in-plotly-and-which-are-the-default/2079
     :param custom_colorbar_title: A title for the colorbar.
+    :param using_ipynb: A boolean which states whether this function is called by a notebook (ipynb). If true, the map is created in cell. Otherwise, it plots to an external HTML.
     :return: df_for_choropleth. This is a miniature dataframe created as a result of plotting the choropleth map.
 
     **Take heed that this function in its current design plots to a local port using the user's default web browser (ex: Chrome, Firefox, etc.)**
@@ -430,7 +466,6 @@ def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plo
     df_for_choropleth = pd.DataFrame({'State': dataframe_to_plot.loc[dataframe_to_plot['Years'] == year_to_plot].columns[2:].tolist(),
                                       'Value': dataframe_to_plot.loc[dataframe_to_plot['Years'] == year_to_plot].squeeze().tolist()[2:]})
 
-    print(df_for_choropleth)
     #TODO: Expand this function to also plot correlations by state
     #TODO: Create a notebook to test these functions
 
@@ -447,39 +482,46 @@ def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plo
         geo_scope='usa',  # This keyword is used to ensure that the plot is be created strictly within the of U.S.A region.
     )
 
-    #fig.show()
-    pol.plot(fig, filename='choropleth_file.html')
+    if using_ipynb:
+        fig.show()
+        return None
+    else:
+        pol.plot(fig, filename='choropleth_file.html')
+        return df_for_choropleth
+
     return df_for_choropleth
 
 def main_test():
-    test_df_un = read_unemployment_by_year(2008, 2018)
-    #print(test_df_un)
+    print("Test function intact. File succesfully imported.")
+    #TODO: read_unemployment_by_year() is bugged. Whenever the start_year is not 2008, data get out of whack.
+    test_df_un = read_unemployment_by_year(2008, 2018, True)
+    print(test_df_un)
     #print(test_df_un.dtypes)
 
-    test_df_hc = read_health_care_coverage_by_year(2008, 2018, 'Private')
-    #print(test_df_hc)
+    test_df_hc = read_health_care_coverage_by_year(2008, 2018, 'Private', True)
+    print(test_df_hc)
     #print(test_df_hc.dtypes)
 
-    #test_df_hh_ic = read_household_income_by_year(1991, 2018)
-    #print(test_df_hh_ic)
+    test_df_hh_ic = read_household_income_by_year(1991, 2018, True)
+    print(test_df_hh_ic)
     #print(test_df_hh_ic.dtypes)
 
-    #test_df_hh_ic = read_household_income_by_year_ver2(1991, 2018)
-    #print(test_df_hh_ic)
+    test_df_hh_ic = read_household_income_by_year_ver2(1991, 2018)
+    print(test_df_hh_ic)
     #print(test_df_hh_ic.dtypes)
 
-    #test_df_cpi = read_cpi_by_year(2003, 2020)
-    #print(test_df_cpi)
+    test_df_cpi = read_cpi_by_year(2003, 2020)
+    print(test_df_cpi)
     #print(test_df_cpi.dtypes)
 
-    #test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_un, test_df_hh_ic, "Unemployment", "HouseHold_Income", "Second")
-    #print(test_df_merged)
+    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_un, test_df_hc, "Unemployment", "Healthcare coverage", "Second", True, True)
+    print(test_df_merged)
     #print(test_df_merged.dtypes)
 
-    spawn_choropleth_from_dataframe(test_df_hc, 2011, 'Private HC Coverage Year 2011', 'Jet', "% by state")
+    spawn_choropleth_from_dataframe(test_df_un, 2011, 'Private HC Coverage Year 2011', 'Jet', "% by state", False)
 
-
-main_test()
+## Un-comment this line below to do a quick test of this file.
+# main_test()
 
 
 
