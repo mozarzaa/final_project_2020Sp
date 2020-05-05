@@ -5,9 +5,6 @@
 * Eva (Yi-Ting) Huang (GitHub ID: iameva62948)
 
 
-### Our codes can be run live online by users on their browsers:
-https://mybinder.org/v2/gh/velwu/final_project_2020Sp/master?filepath=presentation_caller.ipynb
-
 ###Data of interest
 * Insurance Coverage.
 
