@@ -536,14 +536,14 @@ def main_test():
     test_df_cpi = read_cpi_by_year(2003, 2020)
 
     test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_un, "Healthcare coverage", "Unemployment", "First", True, True)
-    #test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_hh_ic, "Unemployment", "Healthcare coverage", "Second", True, True)
+    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_hh_ic, "Unemployment", "Healthcare coverage", "Second", True, True)
 
     spawn_choropleth_from_dataframe(test_df_hc, 2011, 'Private HC Coverage Year 2011', 'Jet', "% by state", False)
 
 ## Un-comment this line below to do a quick test of this file.
-#main_test()
+main_test()
 #TODO: TravisCI test!!
-#TODO: Optimization
+#TODO: Optimization: Numba~ or Cython
 
 
 
