@@ -114,6 +114,10 @@ def read_unemployment_by_year(start_year: int, end_year: int, show_plot: bool) -
 
     if show_plot:
         State_total_percentages_only_flipped.plot(figsize=(32, 18))
+        plt.title("Unemployment Rate by State", fontsize=23)
+        plt.xlabel('Year', fontsize='xx-large')
+        plt.xticks(size=20)
+        plt.ylabel('Unemployment Rate', fontsize='xx-large')
         plt.show()
 
     unemployment_perc_mergeable = State_total_percentages_only_flipped.reset_index().astype({'Years': 'int32'})
@@ -183,6 +187,7 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
                      color=(random.random(), random.random(), random.random()), linewidth=1)
         plt.legend()
         plt.xlabel('Years', fontsize='xx-large')
+        plt.xticks(size=20)
         plt.ylabel('Percentage of People: ' + coverage_type, fontsize='xx-large')
         plt.show()
 
@@ -227,7 +232,9 @@ def read_household_income_by_year(start_year: int, end_year: int, show_plot: boo
             plt.plot('Years', each_state, data=df_flipped, marker='p', markersize=2,
                      color=(random.random(), random.random(), random.random()), linewidth=1)
         plt.legend()
+        plt.title("Household Income (USD) by State and Years", fontsize=23)
         plt.xlabel('Years', fontsize='xx-large')
+        plt.xticks(size=20)
         plt.ylabel('Household Income (USD)', fontsize='xx-large')
         plt.show()
 
@@ -435,17 +442,37 @@ def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dat
 
     if show_plot:
         plt.figure(figsize=(24, 13))
-        plt.title(suffix_1 + "&" + suffix_2 + "Correlations")
-        plt.xlabel("State")
-        plt.ylabel("Correlation Value")
+        plt.title(suffix_1 + " & " + suffix_2 + " Correlations", fontsize=23)
+        plt.xlabel("State", fontsize="xx-large")
+        plt.ylabel("Correlation Value", fontsize="xx-large")
         plt.bar(range(len(correlation_data)), list(correlation_data.values()), align='edge', width=0.7, color='rgbkymc')
-        plt.xticks(range(len(correlation_data)), list(correlation_data.keys()),  color='darkgreen')
+        plt.xticks(range(len(correlation_data)), list(correlation_data.keys()),  color='darkgreen', size=13)
         plt.xticks(rotation=90)
         plt.show()
 
     dataframe_merged = dataframe_merged.loc[:,~dataframe_merged.columns.str.startswith('index')]
 
     return dataframe_merged
+
+def spawn_line_plot_from_dataframe(df_to_plot: pd.DataFrame, plot_title:str, plot_xlabel:str, plot_ylabel:str):
+    """
+    :param df_to_plot: A dataframe which contains statistics thorughout states in USA and years
+    :param plot_title: A title to assign to the line plot
+    :param xlabel: Title for the X axis.
+    :param ylabel: Title for the Y axis.
+    :return: This function is solely created for plotting and so returns nothing.
+    """
+    plt.figure(figsize=(24, 13))
+    plt.plot('Years', 'USA', data=df_to_plot, marker='*', color='#4832a8', linewidth=5)
+    for each_state in df_to_plot.columns[2:]:
+        plt.plot('Years', each_state, data=df_to_plot, marker='p', markersize=2,
+                 color=(random.random(), random.random(), random.random()), linewidth=1)
+    plt.legend()
+    plt.title(plot_title, fontsize=23)
+    plt.xlabel(plot_xlabel, fontsize='xx-large')
+    plt.xticks(size=20)
+    plt.ylabel(plot_ylabel, fontsize='xx-large')
+    plt.show()
 
 def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plot: int, custom_title_text: str, custom_color_scale: str, custom_colorbar_title: str, using_ipynb: bool):
     """
@@ -491,37 +518,33 @@ def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plo
 
     return df_for_choropleth
 
+#TODO: A 3D-scatterplot to show the relations
+# def 3d_scatter_plot_for_correlatons():
+
 def main_test():
     print("Test function intact. File succesfully imported.")
     #TODO: read_unemployment_by_year() is bugged. Whenever the start_year is not 2008, data get out of whack.
     test_df_un = read_unemployment_by_year(2008, 2018, True)
-    print(test_df_un)
-    #print(test_df_un.dtypes)
 
     test_df_hc = read_health_care_coverage_by_year(2008, 2018, 'Private', True)
-    print(test_df_hc)
-    #print(test_df_hc.dtypes)
 
-    test_df_hh_ic = read_household_income_by_year(1991, 2018, True)
-    print(test_df_hh_ic)
-    #print(test_df_hh_ic.dtypes)
+    test_df_hh_ic = read_household_income_by_year(1991, 2018, False)
+    spawn_line_plot_from_dataframe(test_df_hh_ic, "Household Income (USD) by State and Years", "Years", "Household Income (USD)")
 
-    test_df_hh_ic = read_household_income_by_year_ver2(1991, 2018)
-    print(test_df_hh_ic)
-    #print(test_df_hh_ic.dtypes)
+    #test_df_hh_ic = read_household_income_by_year_ver2(1991, 2018)
 
     test_df_cpi = read_cpi_by_year(2003, 2020)
-    print(test_df_cpi)
-    #print(test_df_cpi.dtypes)
 
-    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_un, test_df_hc, "Unemployment", "Healthcare coverage", "Second", True, True)
-    print(test_df_merged)
-    #print(test_df_merged.dtypes)
+    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_un, "Healthcare coverage", "Unemployment", "First", True, True)
+    #test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_hh_ic, "Unemployment", "Healthcare coverage", "Second", True, True)
 
-    spawn_choropleth_from_dataframe(test_df_un, 2011, 'Private HC Coverage Year 2011', 'Jet', "% by state", False)
+    spawn_choropleth_from_dataframe(test_df_hc, 2011, 'Private HC Coverage Year 2011', 'Jet', "% by state", False)
 
 ## Un-comment this line below to do a quick test of this file.
-# main_test()
+#main_test()
+#TODO: TravisCI test!!
+#TODO: Optimization
+
 
 
 
