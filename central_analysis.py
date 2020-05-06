@@ -541,7 +541,7 @@ def main_test():
     spawn_choropleth_from_dataframe(test_df_hc, 2011, 'Private HC Coverage Year 2011', 'Jet', "% by state", False)
 
 ## Un-comment this line below to do a quick test of this file.
-main_test()
+#main_test()
 #TODO: TravisCI test!!
 #TODO: Optimization: Numba~ or Cython
 
