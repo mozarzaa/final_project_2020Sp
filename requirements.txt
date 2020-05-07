@@ -6,4 +6,3 @@ numpy
 scipy
 ipywidgets
 plotly
-importlib
