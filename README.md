@@ -5,7 +5,7 @@
 * Eva (Yi-Ting) Huang (GitHub ID: iameva62948)
 
 
-###Data of interest
+### Data of interest
 * Insurance Coverage.
 
 * Spending per Household.
@@ -31,6 +31,20 @@ https://www.bls.gov/cpi/
 Some news: https://www.vox.com/policy-and-politics/2019/9/10/20858938/health-insurance-census-bureau-data-trump?fbclid=IwAR2s1_ur8ElTtcGjPHKl1zN7D0slSoTbLggHBFRR8X-awwF_YLCJIgvn_4Q
 
 Some other sources: https://www.cdc.gov/nchs/nhis/nhis_2017_data_release.htm?fbclid=IwAR2s1_ur8ElTtcGjPHKl1zN7D0slSoTbLggHBFRR8X-awwF_YLCJIgvn_4Q
+
+## Files: Py and Ipynb
+### 1. central_analysis.py
+- This is the main file. Everything what our project does programmatically is done here. Codes here are built on those originated from **2.** and **3.** below. Most are, suffice to say, overhauled to the point where parameters are no longer hard-coded, but instead follow the general object-oriented programming structure.
+
+### 2. data_exploration.ipynb & data_exploration_2.ipynb
+- There are multiple files of these names but they are more like test spaces where we try out codes to look at the datasets before putting functional codes into "central_analysis.py". Specifically, "data_exploration_2.ipynb" is built on "data_exploration.ipynb" with more visualization though parameters and data passages are still mostly hard-coded.
+
+### 3. Household_Income.ipynb & Household_Income2.ipynb
+- Household incomes are read and parsed in ways that allow them to return an uniform data structure which can be passed into different functions to create different visualizations. 
+
+### 4. presentation_caller.ipynb
+- This is the file we mainly use for demonstrations. It imports several popular libraries plus "central_analysis.py" as dependencies. Viewers of our codes may also run this file to observe the datasets in a comprehensive, interactive way.
+
 
 IS 590 PR - Progr Analytics & Data Process Final Project Proposal (Type II)
 Researh Question:
