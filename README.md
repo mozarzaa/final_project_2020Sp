@@ -5,7 +5,7 @@
 * Eva (Yi-Ting) Huang (GitHub ID: iameva62948)
 
 
-### Data of interest
+## Datasets of interest
 * Insurance Coverage.
 
 * Spending per Household.
@@ -46,6 +46,7 @@ Some other sources: https://www.cdc.gov/nchs/nhis/nhis_2017_data_release.htm?fbc
 - This is the file we mainly use for demonstrations. It imports several popular libraries plus "central_analysis.py" as dependencies. Viewers of our codes may also run this file to observe the datasets in a comprehensive, interactive way.
 
 
+## Project Description
 IS 590 PR - Progr Analytics & Data Process Final Project Proposal (Type II)
 Researh Question:
 How does Unemployment Rate impact Insurance Coverage Ratio in different regions within the United States?
