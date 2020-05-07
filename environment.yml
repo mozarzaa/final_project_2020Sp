@@ -1,3 +1,5 @@
+## This YML file used to serve as a config file for MyBinder deployment and is not currently in use.
+
 name: proganalytics-environment
 channels:
   - conda-forge
