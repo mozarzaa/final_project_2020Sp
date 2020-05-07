@@ -1,4 +1,4 @@
-## Programming Analytics Final Project: Proposal and Data Exploration
+## Programming Analytics Final Project: How does Unemployment Rate impact Insurance Coverage Ratio in different regions within the United States?
 ### Team Members:
 * Yuttawee Kongtananan (GitHub ID: yuttk)
 * Vel (Tien-Yun) Wu (GitHub ID: velwu)
