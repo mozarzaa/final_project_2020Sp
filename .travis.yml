@@ -1,9 +1,27 @@
 language: python
-python:
-  - "3.7"
-# command to install dependencies
+
+# Travis CI configuration
+language: python
+
+matrix:
+  include:
+    - python: 3.6
+    - python: 3.7
+    - python: 3.8
+
 install:
   - pip install -r requirements.txt
+
+# command to run Doctests
+script: pytest --doctest-modules
+
+
+# below are some deprecated stuffs
+#python:
+#  - "3.7"
+# command to install dependencies
+#install:
+#  - pip install -r requirements.txt
 # command to run tests
-script:
-  - pytest
+#script:
+#  - pytest
