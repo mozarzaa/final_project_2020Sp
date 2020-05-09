@@ -99,7 +99,7 @@ Datasets and other variables we use will be collected from sources such as U.S. 
 
     • CHAMPVA or VA: Civilian Health and Medical Program of the Department of Veterans Affairs, as well as care provided by the Department of Veterans Affairs and the military.
 
-##Findings
+## Findings
 
 ![](Images/unemployment.png)
 
@@ -145,7 +145,7 @@ But if we breakdown to private insurance coverage, we will see that most of the 
 
 On the other hand, there are mixed correlations between public insurance coverage and household income by state.
 
-##Analysis
+## Analysis
 
 According to the unemployment rate data, the unemployment rate was increasing in 2008 to 2009, then it has been decreasing since 2009. 
 The explanation is that there is Hamburger crisis in 2008 and it affect the US economy, which lead to the increasing of the unemployment rate in 2009. 
@@ -170,7 +170,7 @@ Unemployment status makes people have less ability to pay for private insurance,
   
   
 
-##Conclusion  
+## Conclusion  
 
 
 ## TODO:
