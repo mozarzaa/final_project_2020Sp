@@ -78,11 +78,22 @@ https://www.census.gov/library/publications/2019/demo/p60-267.html#
 Dataset description: This report presents statistics on health insurance coverage in the United States from 2008 to 2018. The dataset also contains different insurance categories as  dependent variables.
 Public Coverage:
 •  Employment-based: Plan provided by an employer or union
+
 • Direct-purchase: Coverage purchased directly from an insurance company or through a federal or state marketplace (e.g., healthcare. Gov).
+
 • TRICARE: Coverage through TRICARE, formerly known as the Civilian Health and Medical Program of the Uniformed Services.
 
 Private Coverage:
+
  • Medicare: Federal program which compensates healthcare costs for people of or over the age of 65, plus those under 65 but with long-term disabilities.
+ 
 • Medicaid: Medicaid, the Children’s Health Insurance Program (CHIP), and individual state health plans.
+
 • CHAMPVA or VA: Civilian Health and Medical Program of the Department of Veterans Affairs, as well as care provided by the Department of Veterans Affairs and the military
 
+## TODO:
+- 1. Refute or support our existing hypotheses
+- 2. Doctests (Yuttawee)
+- 3. Automated testing using TravisCI (Vel)
+- 3b. Currently cannot get TravisCI to work pass the failure in installing packages. Might need to switch to GitHub Actions if this continues to prove difficult.
+- 4. Optimization using Numba (Yi-Ting)
