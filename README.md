@@ -99,8 +99,78 @@ Datasets and other variables we use will be collected from sources such as U.S. 
 
     • CHAMPVA or VA: Civilian Health and Medical Program of the Department of Veterans Affairs, as well as care provided by the Department of Veterans Affairs and the military.
 
-##Findings and Analysis
+##Findings
 
+![](Images/unemployment.png)
+
+Unemployment rate by state has the same trend, decreasing since 2009.
+
+![](Images/any_insurance_coverage.png)
+
+Any type of insurance coverage rate is concentrated in the north and north-east part of the country.  
+
+![](Images/private_insurance_coverage.png)
+
+Private insurance coverage rate is also concentrated in the north and north-east part of the country.
+
+![](Images/public_insurance_coverage.png)
+
+However, if we breakdown to public insurance coverage, we will see that it is more concentrated in the south part of the country.
+
+![](Images/household_income.png)
+
+Household income of every state has increasing trends since the beginning of our observation.
+
+![](Images/any_insurance_unemployment_corr.png)
+
+Almost of all the states have negative correlations between any type of insurance coverage ratio and unemployment rate.
+
+![](Images/private_insurance_unemployment_corr.png)
+
+For private insurance coverage ratio and unemployment rate, most of the states also have negative correlations.
+
+![](Images/public_insurance_unemployment_corr.png)
+
+Nevertheless, if we breakdown to public insurance coverage, we will see that almost of all the states have positive correlations between insurance coverage ratio and unemployment rate.
+
+![](Images/any_insurance_income_corr.png)
+
+Correlations between any type of insurance coverage ratio and household income by state are mixed.
+
+![](Images/private_insurance_income_corr.png)
+
+But if we breakdown to private insurance coverage, we will see that most of the states have positive correlations.
+
+![](Images/public_insurance_income_corr.png)
+
+On the other hand, there are mixed correlations between public insurance coverage and household income by state.
+
+##Analysis
+
+According to the unemployment rate data, the unemployment rate was increasing in 2008 to 2009, then it has been decreasing since 2009. 
+The explanation is that there is Hamburger crisis in 2008 and it affect the US economy, which lead to the increasing of the unemployment rate in 2009. 
+However, the US economy was back on track after that, the situation is getting better over year, which set decreasing trend to the unemployment rate.
+
+In terms of insurance coverage ratio in 2018, people in the north part and north-east have more insurance compare to people in the other parts of the country.
+This characteristic is also true for the private insurance, Employed-based and Direct-purchase insurance, this could mean people in the north and north-east have more jobs or decided to buy insurance more, compare to people in the other parts of the country. 
+However, if we focus on public insurance, the picture is different, people in the south have more coverage compare to the other parts.
+Normally, elder, disabled, and low-income people are eligible to public insurance, because the objective of public insurance is to help people who cannot afford the price of private insurance. 
+Consequently, it makes sense that people in the south, who have less private insurance coverage, have more public insurance coverage.
+
+From the correlation results, it is obvious that unemployment rate has some effect on the insurance coverage ratio. 
+For private insurance coverage, the unemployment rate has negative effect on it.
+There are two reasons two explain the connection between the unemployment rate and the insurance coverage ratio.
+First, when people lose their jobs, they lose their Employer-based insurance.
+Second, when people lose their jobs, they also have less income to pay for Direct-purchase income.
+However, for public insurance coverage, the unemployment rate has positive effect on it.
+As mentioned before, the public insurance has people who cannot afford the price of private income as a target group. 
+Unemployment status makes people have less ability to pay for private insurance, then people will need public insurance to cover their medical expenses.  
+
+
+  
+  
+
+##Conclusion  
 
 
 ## TODO:
