@@ -255,7 +255,7 @@ def read_household_income_by_year_ver2(start_year: int, end_year: int) -> pd.Dat
     :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
     :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
     """
-    #TODO: Add a plotting feature to this function.
+    #TODO: Add a CPI-based adjustment to this function so its outputs are meaningfully different from read_household_income_by_year()
 
     if start_year < 1984 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
@@ -454,6 +454,8 @@ def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dat
 
     return dataframe_merged
 
+
+
 def spawn_line_plot_from_dataframe(df_to_plot: pd.DataFrame, plot_title:str, plot_xlabel:str, plot_ylabel:str):
     """
     :param df_to_plot: A dataframe which contains statistics thorughout states in USA and years
@@ -493,8 +495,6 @@ def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plo
     df_for_choropleth = pd.DataFrame({'State': dataframe_to_plot.loc[dataframe_to_plot['Years'] == year_to_plot].columns[2:].tolist(),
                                       'Value': dataframe_to_plot.loc[dataframe_to_plot['Years'] == year_to_plot].squeeze().tolist()[2:]})
 
-    #TODO: Expand this function to also plot correlations by state
-    #TODO: Create a notebook to test these functions
 
     fig = pgo.Figure(data=pgo.Choropleth(
         locations=df_for_choropleth['State'],  # Spatial coordinates which is referred to using state codes contained in a pandas series.
