@@ -74,7 +74,7 @@ By analyzing data describing medical insurances, unemployment rates, and demogra
 II. Datasets Description
 
 Datasets and other variables we use will be collected from sources such as U.S. CENSUS BUREAU and U.S. BUREAU OF LABOR STATISTICS, both of which serve as primary subjects of this project.
- 1) Local Area Unemployment Staistics - https://www.bls.gov/lau/lastrk19.htm
+ 1) Local Area Unemployment Statistics - https://www.bls.gov/lau/lastrk19.htm
 
     Dataset description: This website includes data describing monthly and annual employment, unemployment, and labor force traits within Census regions, divisions, States, counties, cities, metropolitan areas, and residences / settlements of other forms.
     In the analysis, we will select some variables from the data as independent variables in terms of demographics and economy.			
@@ -99,78 +99,106 @@ Datasets and other variables we use will be collected from sources such as U.S. 
 
     • CHAMPVA or VA: Civilian Health and Medical Program of the Department of Veterans Affairs, as well as care provided by the Department of Veterans Affairs and the military.
 
-## Findings
+## Findings and Analysis
+
+### Unemployment rate trend
 
 ![](Images/unemployment.png)
-
-Unemployment rate by state has the same trend, decreasing since 2009.
-
-![](Images/any_insurance_coverage.png)
-
-Any type of insurance coverage rate is concentrated in the north and north-east part of the country.  
-
-![](Images/private_insurance_coverage.png)
-
-Private insurance coverage rate is also concentrated in the north and north-east part of the country.
-
-![](Images/public_insurance_coverage.png)
-
-However, if we breakdown to public insurance coverage, we will see that it is more concentrated in the south part of the country.
-
-![](Images/household_income.png)
-
-Household income of every state has increasing trends since the beginning of our observation.
-
-![](Images/any_insurance_unemployment_corr.png)
-
-Almost of all the states have negative correlations between any type of insurance coverage ratio and unemployment rate.
-
-![](Images/private_insurance_unemployment_corr.png)
-
-For private insurance coverage ratio and unemployment rate, most of the states also have negative correlations.
-
-![](Images/public_insurance_unemployment_corr.png)
-
-Nevertheless, if we breakdown to public insurance coverage, we will see that almost of all the states have positive correlations between insurance coverage ratio and unemployment rate.
-
-![](Images/any_insurance_income_corr.png)
-
-Correlations between any type of insurance coverage ratio and household income by state are mixed.
-
-![](Images/private_insurance_income_corr.png)
-
-But if we breakdown to private insurance coverage, we will see that most of the states have positive correlations.
-
-![](Images/public_insurance_income_corr.png)
-
-On the other hand, there are mixed correlations between public insurance coverage and household income by state.
-
-## Analysis
 
 According to the unemployment rate data, the unemployment rate was increasing in 2008 to 2009, then it has been decreasing since 2009. 
 The explanation is that there is Hamburger crisis in 2008 and it affect the US economy, which lead to the increasing of the unemployment rate in 2009. 
 However, the US economy was back on track after that, the situation is getting better over year, which set decreasing trend to the unemployment rate.
 
+### insurance coverage by state
+
+![](Images/any_insurance_coverage.png)
+
 In terms of insurance coverage ratio in 2018, people in the north part and north-east have more insurance compare to people in the other parts of the country.
-This characteristic is also true for the private insurance, Employed-based and Direct-purchase insurance, this could mean people in the north and north-east have more jobs or decided to buy insurance more, compare to people in the other parts of the country. 
+
+![](Images/private_insurance_coverage.png)
+
+This characteristic is also true for the private insurance, consist of Employed-based and Direct-purchase insurance, this could mean people in the north and the north-east have more jobs or decided to buy insurance more, compare to people in the other parts of the country. 
+
+![](Images/public_insurance_coverage.png)
+
 However, if we focus on public insurance, the picture is different, people in the south have more coverage compare to the other parts.
+Why is that?
+
 Normally, elder, disabled, and low-income people are eligible to public insurance, because the objective of public insurance is to help people who cannot afford the price of private insurance. 
 Consequently, it makes sense that people in the south, who have less private insurance coverage, have more public insurance coverage.
 
-From the correlation results, it is obvious that unemployment rate has some effect on the insurance coverage ratio. 
-For private insurance coverage, the unemployment rate has negative effect on it.
-There are two reasons two explain the connection between the unemployment rate and the insurance coverage ratio.
+### Hypothesis 1: There is a negative linear correlation between local unemployment rate and insurance coverage ratio in each state
+
+![](Images/any_insurance_unemployment_corr.png)
+
+From the correlation results between unemployment rate and any type of insurance coverage ratio, it is obvious that unemployment rate has some effect on the insurance coverage ratio.
+Most of the states have negative correlations between unemployment rate and any type of insurance coverage ratio.
+
+Hypothesis 1 is TRUE
+
+### Hypothesis 2: The effects of unemployment rate on insurance coverage ratio & each type of insurance are not equal
+
+![](Images/private_insurance_unemployment_corr.png)
+  
+The negative correlations also happen for private insurance coverage, most of the states also have negative correlations.
+There are two reasons to explain the connection between the unemployment rate and the private insurance coverage ratio (consist of Employer-based and Direct-purchase insurance).
 First, when people lose their jobs, they lose their Employer-based insurance.
 Second, when people lose their jobs, they also have less income to pay for Direct-purchase income.
-However, for public insurance coverage, the unemployment rate has positive effect on it.
+
+![](Images/public_insurance_unemployment_corr.png)
+
+However, for public insurance coverage, the unemployment rate seems to has positive effect on it.
 As mentioned before, the public insurance has people who cannot afford the price of private income as a target group. 
-Unemployment status makes people have less ability to pay for private insurance, then people will need public insurance to cover their medical expenses.  
+Unemployment status makes people have less ability to pay for private insurance, then people will need public insurance to cover their medical expenses.
 
+Hypothesis 2 is TRUE
 
-  
-  
+### Hypothesis 3: There is a positive linear correlation between the insurance coverage ratio and household income
+
+Because we have an assumption that when people have more income, they may want to buy more insurance, so we investigated in two datasets.
+Insurance coverage ratio and household income in each state.
+
+![](Images/any_insurance_income_corr.png)
+
+We found that the correlations between any type of insurance coverage ratio and household income by state are mixed.
+So we cannot clearly identify impact of household income on any insurance coverage ratio.
+
+![](Images/private_insurance_income_corr.png)
+
+However, if we breakdown to private insurance, we can see that most of the states have positive correlations.
+This positive correlations happened maybe because when people have more money they tend to buy more insurance (Increase Direct-purchase insurance), or people have more income may indicate they have more jobs (Increase Employer-based insurance). 
+
+![](Images/public_insurance_income_corr.png)
+
+For public insurance, the correlations by state are mixed, this is the same as the case of any type of insurance.
+So we cannot find an obvious connection between public insurance coverage ration and household income.    
+
+Hypothesis 3 is FALSE
+
+### Hypothesis 4: There is no significant discrepancy between said correlations found in different states
+
+As you can see from the histograms of correlation in the other hypotheses, there are differences in the size of correlations between states.
+So we cannot conclude that their is no significant discrepancy of correlations between states.
+
+Hypothesis 4 is FALSE
 
 ## Conclusion  
+
+From the health insurance payment systems of the US, employers need to pay for health insurance for their employees.
+Consequently, unemployment rate should has an effect on health insurance coverage ratio. 
+As we see from the analysis, unemployment rate has negative effect on insurance coverage ratio (Negative correlation). 
+However, if we focus on the public insurance coverage ratio, we will see that unemployment rate has positive effect on it (Positive correlation).
+This happen because public insurance aim to help people who cannot afford private insurance, so when people lose their jobs their can switch to apply for public insurance instead.
+
+In terms of household income and insurance coverage ratio, there is no clear connection between them. 
+We also cannot find clear connection between household income and public insurance coverage ratio.
+Nevertheless, if we breakdown to private insurance we can see that household income has positive impact to insurance coverage.
+Maybe this positive impact cause from two reasons. 
+First, people tend to buy more insurance when they have more money. 
+Second, when people have more income, it may indicate that they have more jobs that will increase one type of private insurance, Employer-based insurance coverage.     
+
+## Limitations
+
 
 
 ## TODO:
