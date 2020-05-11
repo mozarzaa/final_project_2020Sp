@@ -5,12 +5,7 @@ import matplotlib.pyplot as plt
 matplotlib.rcParams["font.family"] = "fantasy"
 import numpy as np
 import random
-import scipy
-import scipy.misc
-import scipy.cluster
 
-from pandas.io.json import json_normalize
-import plotly.express as px
 import plotly.graph_objects as pgo
 import plotly.offline as pol
 
@@ -90,8 +85,8 @@ def read_unemployment_by_year(start_year: int, end_year: int, show_plot: bool) -
     """
 
     #TODO: (Note by Vel to Yi-Ting) This function has a bug. Whenever the start_year is not 2008, data in the second year followed by every +3 year gets out of whack
-    #TODO: I believe this has something to do with "State_total.iloc[0:,3*i+2] / State_total.iloc[0:,3*i]*100". Whoever wrote the original will have to fix this.
-    #TODO: For now, please ONLY state start_year as 2008.
+    # I believe this has something to do with "State_total.iloc[0:,3*i+2] / State_total.iloc[0:,3*i]*100". Whoever wrote the original will have to fix this.
+    # For now, please ONLY state start_year as 2008.
 
     if start_year < 2008 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
@@ -241,8 +236,6 @@ def read_household_income_by_year(start_year: int, end_year: int, show_plot: boo
     Botched year formats!! Check input values!
     >>> read_household_income_by_year(1984,2018,False).shape
     (35, 53)
-    >>> read_household_income_by_year(1984,2018,False).shape
-    (35, 53)
     """
     if start_year < 1984 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
@@ -290,6 +283,7 @@ def read_household_income_by_year_ver2(start_year: int, end_year: int, cpi_adjus
     :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
     :param cpi_adjustment: A boolean that states whether the Household_Income dataframe will be merged a CPI frame to adjust its USD values.
     :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
+    #TODO: Finish this doctest.
     >>> read_household_income_by_year_ver2(2008, 2018)
     pd.DataFrame
     """
@@ -383,15 +377,23 @@ def read_household_income_by_year_ver2(start_year: int, end_year: int, cpi_adjus
         if hh_income_by_state_flipped[each].dtype == 'object':
             hh_income_by_state_flipped = hh_income_by_state_flipped.astype({each: 'float64'})
 
-    #TODO: Add a CPI-based adjustment to this function so its outputs are meaningfully different from read_household_income_by_year()
     if cpi_adjustment:
         cpi_frame = read_cpi_by_year(start_year, end_year)
         hh_cpi_fusion = pd.merge(hh_income_by_state_flipped, cpi_frame, how='inner', on='Years')
 
+        # TODO: This is a temporary solution to prevent first row from becoming NaN with this calculation.
+        #  Ideally, the first row should be preserved. But I can't yet find a workaround for pdc_change()'s behavior which insists on making the first row NaN.
+       #hh_cpi_first_row = hh_cpi_fusion.iloc[0:1]
+       #hh_cpi_other_rows = hh_cpi_fusion.iloc[1:]
+
         for each_state_col in [col for col in hh_cpi_fusion.columns if "CPI" not in col and "Years" not in col]:
-            #TODO: Fix this algorithm. It's not the real CPI adjustment!
-            #TODO: The first row becomes NaN with this calculation.
             hh_cpi_fusion[each_state_col] = hh_cpi_fusion[each_state_col] / (1 + hh_cpi_fusion["CPI All items"].pct_change())
+
+        hh_cpi_fusion = hh_cpi_fusion.iloc[1:]
+
+        #hh_cpi_fusion = pd.concat([hh_cpi_first_row, hh_cpi_other_rows])
+        #hh_cpi_fusion = pd.concat([hh_cpi_first_row, hh_cpi_other_rows[:]]).reset_index(drop = True)
+
         return hh_cpi_fusion
     else:
         return hh_income_by_state_flipped
@@ -601,7 +603,9 @@ def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plo
 
     return df_for_choropleth
 
-#TODO: A 3D-scatterplot to show the relations
+#TODO: A 3D-scatterplot to show the relations (with HC coverage as color/Y-value, and all other stats as features. Assuming this is a multi-linear model~~).
+# This will have to wait after the finals because we have to priotize TravisCI and Cython optimization.
+
 # def 3d_scatter_plot_for_correlatons():
 
 def main_test():
@@ -614,15 +618,19 @@ def main_test():
     test_df_hh_ic = read_household_income_by_year(1991, 2018, False)
     spawn_line_plot_from_dataframe(test_df_hh_ic, "Household Income (USD) by State and Years", "Years", "Household Income (USD)")
 
-    #test_df_hh_ic = read_household_income_by_year_ver2(1991, 2018, False)
-    #test_df_cpi = read_cpi_by_year(2003, 2020)
+    test_df_hh_ic_2 = read_household_income_by_year_ver2(1991, 2018, True)
+    test_df_cpi = read_cpi_by_year(2003, 2020)
 
-    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_un, "Healthcare coverage", "Unemployment", "First", True, True)
-    test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_hh_ic, "Unemployment", "Healthcare coverage", "Second", True, True)
+    test_df_result1 = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_un, "Healthcare coverage", "Unemployment",
+                                                                    "First", True, True)
+    test_df_result2 = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_hh_ic, "Healthcare coverage", "Household Income",
+                                                                    "Second", True, True)
+    test_df_result3 = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_hh_ic_2, "Healthcare coverage", "Household Income: CPI Adjusted",
+                                                                    "Second", True, True)
 
     spawn_choropleth_from_dataframe(test_df_hc, 2011, 'Private HC Coverage Year 2011', 'Jet', "% by state", False)
 
-## Un-comment this line below to do a quick test of this file.
+## Un-comment this line below to perform an integrated test of this file.
 #main_test()
 #TODO: TravisCI test!!
 #TODO: Optimization: Numba~ or Cython
