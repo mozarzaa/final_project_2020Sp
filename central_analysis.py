@@ -572,6 +572,15 @@ def spawn_line_plot_from_dataframe(df_to_plot: pd.DataFrame, plot_title:str, plo
     :param xlabel: Title for the X axis.
     :param ylabel: Title for the Y axis.
     :return: This function is solely created for plotting and so returns nothing.
+    Since this is a plotting function which returns None, the doctests here focus on making sure the function:
+        (1) Runs to the end without errors (images should be appearing in the IDE)
+        (2) Can detect wrong inputs wih the relevant error message
+    >>> doctest_df = read_household_income_by_year(1991, 2018, False)
+    >>> spawn_line_plot_from_dataframe(doctest_df, "Test Graph", "Years", "Household Income in USD") is None
+    True
+    >>> spawn_line_plot_from_dataframe("Fake dataframe", "Fake title", "Fake labels", "Fake news")
+    Traceback (most recent call last):
+    ValueError: Unrecognized character U in format string
     """
     plt.figure(figsize=(24, 13))
     plt.plot('Years', 'USA', data=df_to_plot, marker='*', color='#4832a8', linewidth=5)
@@ -597,6 +606,15 @@ def spawn_choropleth_from_dataframe(dataframe_to_plot: pd.DataFrame, year_to_plo
     :param custom_colorbar_title: A title for the colorbar.
     :param using_ipynb: A boolean which states whether this function is called by a notebook (ipynb). If true, the map is created in cell. Otherwise, it plots to an external HTML.
     :return: df_for_choropleth. This is a miniature dataframe created as a result of plotting the choropleth map.
+    Since this is a plotting function, the doctests here focus on making sure the function:
+        (1) Runs to the end without errors (an image should still pop up as a result)
+        (2) Can detect wrong inputs wih the relevant error message
+    >>> doctest_df = read_health_care_coverage_by_year(2008, 2018, 'Private', True)
+    >>> spawn_choropleth_from_dataframe(doctest_df, 2011, 'Private HC Coverage Year 2011', 'Jet', "% by state", False) is None
+    False
+    >>> spawn_choropleth_from_dataframe("Some weird flex", 2077, "But Okay", "Blues", "Weird title", False)
+    Traceback (most recent call last):
+    AttributeError: 'str' object has no attribute 'loc'
 
     **Take heed that this function in its current design plots to a local port using the user's default web browser (ex: Chrome, Firefox, etc.)**
     """
@@ -654,9 +672,8 @@ def main_test():
 
     spawn_choropleth_from_dataframe(test_df_hc, 2011, 'Private HC Coverage Year 2011', 'Jet', "% by state", False)
 
-## Un-comment this line below to perform an integrated test of this file.
+## Aside from the doctests above, any developer may un-comment this line below to perform an integrated test of this file.
 #main_test()
-#TODO: TravisCI test!!
 #TODO: Optimization: Numba~ or Cython
 
 
