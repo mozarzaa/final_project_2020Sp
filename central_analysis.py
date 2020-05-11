@@ -78,6 +78,15 @@ def read_unemployment_by_year(start_year: int, end_year: int, show_plot: bool) -
     :param end_year: The last year of the dataframe read in from the Unemployment Data 'Un.xlsx'. No data exists beyond year 2018, so this number should be 2018 at maximum.
     :param show_plot: Whether the line plot will be created.
     :return: State_total_percentages_only_flipped. This is a pandas dataframe containing only total unemployment percentages in all states.
+
+    >>> read_unemployment_by_year(2007,2017,False)
+    Botched year formats!! Check input values!
+    >>> read_unemployment_by_year(2008,2020,False)
+    Botched year formats!! Check input values!
+    >>> read_unemployment_by_year(2010,2008,False)
+    Botched year formats!! Check input values!
+    >>> read_unemployment_by_year(2008,2018,False).shape
+    (11, 53)
     """
 
     #TODO: (Note by Vel to Yi-Ting) This function has a bug. Whenever the start_year is not 2008, data in the second year followed by every +3 year gets out of whack
@@ -135,6 +144,21 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
         ['Total', 'Any coverage', 'Uninsured', 'Private', '..Employer-based', '..Direct-purchase', '..TRICARE', 'Public', '..Medicaid', '..Medicare', '..VA Care']
     :param show_plot: Whether the line plot will be created.
     :return: A dataframe which describes the insurance type's coverage in all states.
+
+    >>> read_health_care_coverage_by_year(2000,2017,'Private',False)
+    Botched year formats!! Check input values!
+    >>> read_health_care_coverage_by_year(2009,2020,'Public',False)
+    Botched year formats!! Check input values!
+    >>> read_health_care_coverage_by_year(2010,2008,'Private',False)
+    Botched year formats!! Check input values!
+    >>> read_health_care_coverage_by_year(2010,2008,'Public',False)
+    Botched year formats!! Check input values!
+    >>> read_health_care_coverage_by_year(2008,2018,'Any coverage',False).shape
+    (11, 53)
+    >>> read_health_care_coverage_by_year(2010,2015,'Private',False).shape
+    (6, 53)
+    >>> read_health_care_coverage_by_year(2015,2018,'Public',False).shape
+    (4, 53)
     """
     if start_year < 2008 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
@@ -208,6 +232,17 @@ def read_household_income_by_year(start_year: int, end_year: int, show_plot: boo
     :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
     :param show_plot: Whether a plot will be created.
     :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
+
+    >>> read_household_income_by_year(1980,2017,False)
+    Botched year formats!! Check input values!
+    >>> read_household_income_by_year(1984,2020,False)
+    Botched year formats!! Check input values!
+    >>> read_household_income_by_year(2015,2008,False)
+    Botched year formats!! Check input values!
+    >>> read_household_income_by_year(1984,2018,False).shape
+    (35, 53)
+    >>> read_household_income_by_year(1984,2018,False).shape
+    (35, 53)
     """
     if start_year < 1984 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
@@ -366,6 +401,17 @@ def read_cpi_by_year(start_year: int, end_year: int) -> pd.DataFrame:
     :param start_year: The first year where the output dataframe will have. Should be 1935 minimum.
     :param end_year: The last year where the output dataframe will have. Should be 2020 maximum.
     :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
+
+    >>> read_cpi_by_year(1920,2020).shape
+    (86, 5)
+    >>> read_cpi_by_year(1920,2017).shape
+    (83, 5)
+    >>> read_cpi_by_year(1935,2030).shape
+    (86, 5)
+    >>> read_cpi_by_year(1935,2018).shape
+    (84, 5)
+    >>> read_cpi_by_year(1935,2020).shape
+    (86, 5)
     """
     raw_cpi_all = pd.read_csv('cu.data.1.AllItems.txt', sep='\t')
     raw_cpi_medical = pd.read_csv('cu.data.15.USMedical.txt', sep='\t')
@@ -408,6 +454,30 @@ def merging_dataframes_on_years_plus_correlations(dataframe_1: pd.DataFrame, dat
     :param show_corr: Whether to print the correlations (into console and/or ipynb cell)
     :param show_plot: Whether to plot the correlations.
     :return: A merged dataframe with columns from both input dataframes. Because the join type is inner, only years which both dataframe contain will be left.
+
+    >>> df1=read_health_care_coverage_by_year(2008, 2018, 'Any coverage', False)
+    >>> df2=read_household_income_by_year(1991, 2018, False)
+    >>> merging_dataframes_on_years_plus_correlations(df1, df2, "Healthcare coverage", "HH Income", 'First', False, False).shape
+    Healthcare coverage  growth rate & HH Income  raw value Correlations:
+    (11, 106)
+    >>> df3=read_health_care_coverage_by_year(2010, 2015, 'Any coverage', False)
+    >>> df4=read_unemployment_by_year(2008, 2018, False)
+    >>> merging_dataframes_on_years_plus_correlations(df3, df4, "Healthcare coverage", "Unemployment", 'Second', False, False).shape
+    Healthcare coverage  raw value & Unemployment  growth rate Correlations:
+    (6, 106)
+    >>> df5=read_household_income_by_year(2010, 2018, False)
+    >>> df6=read_unemployment_by_year(2008, 2018, False)
+    >>> merging_dataframes_on_years_plus_correlations(df5, df6, "HH Income", "Unemployment", 'Both', False, False).shape
+    HH Income & Unemployment Correlations w/ growth rates:
+    (9, 106)
+    >>> d={'Years': [2000,2001,2002],'S1': [2,5,7],'S2': [3,8,9],'S3': [4,2,6]}
+    >>> df7=pd.DataFrame(data=d)
+    >>> merging_dataframes_on_years_plus_correlations(df7, df7, "Data1", "Data2", 'Both', True, False).shape
+    Data1 & Data2 Correlations w/ growth rates:
+    S1  :  1.0
+    S2  :  0.9999999999999998
+    S3  :  0.9999999999999999
+    (3, 8)
     """
 
     # Allocate the 2 dataframes to a location in memory with suffixes to differentiate their columns pointing to the same years
