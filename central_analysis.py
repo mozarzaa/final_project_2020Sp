@@ -82,6 +82,12 @@ def read_unemployment_by_year(start_year: int, end_year: int, show_plot: bool) -
     Botched year formats!! Check input values!
     >>> read_unemployment_by_year(2008,2018,False).shape
     (11, 53)
+    >>> read_unemployment_by_year("P@nera", "Bread", "Coffee subscription is great.")
+    Traceback (most recent call last):
+    TypeError: '<' not supported between instances of 'str' and 'int'
+    >>> read_unemployment_by_year(2009, 2015)
+    Traceback (most recent call last):
+    TypeError: read_unemployment_by_year() missing 1 required positional argument: 'show_plot'
     """
 
     #TODO: (Note by Vel to Yi-Ting) This function has a bug. Whenever the start_year is not 2008, data in the second year followed by every +3 year gets out of whack
@@ -154,6 +160,12 @@ def read_health_care_coverage_by_year(start_year: int, end_year: int, coverage_t
     (6, 53)
     >>> read_health_care_coverage_by_year(2015,2018,'Public',False).shape
     (4, 53)
+    >>> read_health_care_coverage_by_year(2011, 2017)
+    Traceback (most recent call last):
+    TypeError: read_health_care_coverage_by_year() missing 2 required positional arguments: 'coverage_type' and 'show_plot'
+    >>> read_health_care_coverage_by_year("C@ffe", "Bene", "Atmospheric", "Good for d@ting")
+    Traceback (most recent call last):
+    TypeError: '<' not supported between instances of 'str' and 'int'
     """
     if start_year < 2008 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
@@ -284,8 +296,17 @@ def read_household_income_by_year_ver2(start_year: int, end_year: int, cpi_adjus
     :param cpi_adjustment: A boolean that states whether the Household_Income dataframe will be merged a CPI frame to adjust its USD values.
     :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
     #TODO: Finish this doctest.
-    >>> read_household_income_by_year_ver2(2008, 2018)
-    pd.DataFrame
+    >>> read_household_income_by_year_ver2(1991, 2018, False).shape
+    (28, 53)
+    >>> read_household_income_by_year_ver2(2000, 2011, True).shape
+    (11, 57)
+    >>> read_household_income_by_year_ver2(2003, 2013, "Cybernetics").shape
+    (11, 53)
+    >>> read_household_income_by_year_ver2(1980, 2077, True)
+    Botched year formats!! Check input values!
+    >>> read_household_income_by_year_ver2("P@nda", "Express", "Tasty")
+    Traceback (most recent call last):
+    TypeError: '<' not supported between instances of 'str' and 'int'
     """
     if start_year < 1984 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
@@ -377,7 +398,7 @@ def read_household_income_by_year_ver2(start_year: int, end_year: int, cpi_adjus
         if hh_income_by_state_flipped[each].dtype == 'object':
             hh_income_by_state_flipped = hh_income_by_state_flipped.astype({each: 'float64'})
 
-    if cpi_adjustment:
+    if cpi_adjustment and type(cpi_adjustment)==bool:
         cpi_frame = read_cpi_by_year(start_year, end_year)
         hh_cpi_fusion = pd.merge(hh_income_by_state_flipped, cpi_frame, how='inner', on='Years')
 
@@ -414,6 +435,9 @@ def read_cpi_by_year(start_year: int, end_year: int) -> pd.DataFrame:
     (84, 5)
     >>> read_cpi_by_year(1935,2020).shape
     (86, 5)
+    >>> read_cpi_by_year("Sak@naya", "My favorite")
+    Traceback (most recent call last):
+    TypeError: Invalid comparison between dtype=int64 and str
     """
     raw_cpi_all = pd.read_csv('cu.data.1.AllItems.txt', sep='\t')
     raw_cpi_medical = pd.read_csv('cu.data.15.USMedical.txt', sep='\t')
