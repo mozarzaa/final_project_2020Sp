@@ -205,8 +205,7 @@ First, ACA subsidy insurance premium of private insurance for low-income people.
 Second, ACA expands Medicaid program, one of public insurance, to cover adults who have low-income.
 
 ## TODO:
-- 1. Refute or support our existing hypotheses
-- 2. Doctests (Yuttawee)
-- 3. Automated testing using TravisCI (Vel)
-- 3b. All our doctests pass in PyCharm but TravisCI for some reason fails 4 out of 5 functions with doctests. The nebulous error messages are not helping either.
+- 1. Refute or support our existing hypotheses (Yuttawee and Yi-Ting) (Done 05/10/2020)
+- 2. Doctests (Yuttawee) (Done 05/11/2020)
+- 3. Automated testing using TravisCI (Vel): (Done 05/11/2020)
 - 4. Optimization using Numba (Yi-Ting)
