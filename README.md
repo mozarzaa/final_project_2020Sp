@@ -199,7 +199,11 @@ Second, when people have more income, it may indicate that they have more jobs t
 
 ## Limitations
 
-
+From the correlation results, it seems there is clear connection between unemployment rate and insurance coverage ratio.
+However, the increasing of insurance coverage ratio since 2014 might cause by the Affordable Care Act (ACA) or Obamacare, which aim to make insurance price affordable to American people.
+ACA has two essential goals to support people that may significantly affect the coverage. 
+First, ACA subsidy insurance premium of private insurance for low-income people.
+Second, ACA expand Medicaid program, one of public insurance, to cover adults who have low-income.
 
 ## TODO:
 - 1. Refute or support our existing hypotheses
