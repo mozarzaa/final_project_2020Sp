@@ -80,7 +80,7 @@ def read_unemployment_by_year(start_year: int, end_year: int, show_plot: bool) -
     :return: State_total_percentages_only_flipped. This is a pandas dataframe containing only total unemployment percentages in all states.
     """
 
-    #TODO: This function has a bug. Whenever the start_year is not 2008, data in the second year followed by every +3 year gets out of whack
+    #TODO: (Note by Vel to Yi-Ting) This function has a bug. Whenever the start_year is not 2008, data in the second year followed by every +3 year gets out of whack
     #TODO: I believe this has something to do with "State_total.iloc[0:,3*i+2] / State_total.iloc[0:,3*i]*100". Whoever wrote the original will have to fix this.
     #TODO: For now, please ONLY state start_year as 2008.
 
@@ -249,14 +249,15 @@ def read_household_income_by_year(start_year: int, end_year: int, show_plot: boo
 
     return df_flipped
 
-def read_household_income_by_year_ver2(start_year: int, end_year: int) -> pd.DataFrame:
+def read_household_income_by_year_ver2(start_year: int, end_year: int, cpi_adjustment: bool) -> pd.DataFrame:
     """
     :param start_year: The first year where the output dataframe will have. Should be 1984 minimum.
     :param end_year: The last year where the output dataframe will have. Should be 2018 maximum.
+    :param cpi_adjustment: A boolean that states whether the Household_Income dataframe will be merged a CPI frame to adjust its USD values.
     :return: A dataframe recording household income in USD within each state, subsetted by the year range specified.
+    >>> read_household_income_by_year_ver2(2008, 2018)
+    pd.DataFrame
     """
-    #TODO: Add a CPI-based adjustment to this function so its outputs are meaningfully different from read_household_income_by_year()
-
     if start_year < 1984 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
         return None
@@ -346,7 +347,19 @@ def read_household_income_by_year_ver2(start_year: int, end_year: int) -> pd.Dat
     for each in hh_income_by_state_flipped.columns:
         if hh_income_by_state_flipped[each].dtype == 'object':
             hh_income_by_state_flipped = hh_income_by_state_flipped.astype({each: 'float64'})
-    return hh_income_by_state_flipped
+
+    #TODO: Add a CPI-based adjustment to this function so its outputs are meaningfully different from read_household_income_by_year()
+    if cpi_adjustment:
+        cpi_frame = read_cpi_by_year(start_year, end_year)
+        hh_cpi_fusion = pd.merge(hh_income_by_state_flipped, cpi_frame, how='inner', on='Years')
+
+        for each_state_col in [col for col in hh_cpi_fusion.columns if "CPI" not in col and "Years" not in col]:
+            #TODO: Fix this algorithm. It's not the real CPI adjustment!
+            #TODO: The first row becomes NaN with this calculation.
+            hh_cpi_fusion[each_state_col] = hh_cpi_fusion[each_state_col] / (1 + hh_cpi_fusion["CPI All items"].pct_change())
+        return hh_cpi_fusion
+    else:
+        return hh_income_by_state_flipped
 
 def read_cpi_by_year(start_year: int, end_year: int) -> pd.DataFrame:
     """
@@ -531,9 +544,8 @@ def main_test():
     test_df_hh_ic = read_household_income_by_year(1991, 2018, False)
     spawn_line_plot_from_dataframe(test_df_hh_ic, "Household Income (USD) by State and Years", "Years", "Household Income (USD)")
 
-    #test_df_hh_ic = read_household_income_by_year_ver2(1991, 2018)
-
-    test_df_cpi = read_cpi_by_year(2003, 2020)
+    #test_df_hh_ic = read_household_income_by_year_ver2(1991, 2018, False)
+    #test_df_cpi = read_cpi_by_year(2003, 2020)
 
     test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_un, "Healthcare coverage", "Unemployment", "First", True, True)
     test_df_merged = merging_dataframes_on_years_plus_correlations(test_df_hc, test_df_hh_ic, "Unemployment", "Healthcare coverage", "Second", True, True)
