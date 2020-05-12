@@ -249,6 +249,7 @@ def read_household_income_by_year(start_year: int, end_year: int, show_plot: boo
     >>> read_household_income_by_year(1984,2018,False).shape
     (35, 53)
     """
+    #This function does not import the original household income data, so we created the new function that actually import the original data - read_household_income_by_year_ver2().
     if start_year < 1984 or end_year > 2018 or end_year < start_year:
         print("Botched year formats!! Check input values!")
         return None

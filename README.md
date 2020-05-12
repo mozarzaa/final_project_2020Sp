@@ -200,6 +200,10 @@ Second, when people have more income, it may indicate that they have more jobs t
 
 From the correlation results, it seems there is a clear connection between unemployment rate and insurance coverage ratio.
 However, the increasing of insurance coverage ratio since 2014 might cause by the Affordable Care Act (ACA) or Obamacare, which aim to make insurance price affordable to American people.
+ACA was effective in 2014, which massively affected the growth rate of household insurance expense, as you can see from the household expense graph below.
+
+![](Images/household_insurance_expense_growth.png)
+
 ACA has two essential goals to support people that may significantly affect the coverage. 
 First, ACA subsidy insurance premium of private insurance for low-income people.
 Second, ACA expands Medicaid program, one of public insurance, to cover adults who have low-income.
