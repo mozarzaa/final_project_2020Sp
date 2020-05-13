@@ -6,20 +6,20 @@
 
 ### Work Distribution:
 * Vel (Tien-Yun) Wu:
-Healthcare insurance data cleaning
-Data visualization
-The functions of correlation
-Automated testing using TravisCI
+ 1)Healthcare insurance data cleaning
+ 2)Data visualization
+ 3)The functions of correlation
+ 4)Automated testing using TravisCI
 
 * Yuttawee Kongtananan: 
-Household revenue and CPI data cleaning
-Doctests
-Findings and Analysis of outcome
+ 1)Household revenue and CPI data cleaning
+ 2)Doctests
+ 3)Findings and Analysis of outcome
 
 * Eva (Yi-Ting) Huang:
-The proposal for project and hypothesis design
-Unemployment data cleaning
-The Cython for optimization
+ 1)The proposal for project and hypothesis design
+ 2)Unemployment data cleaning
+ 3)The Cython for optimization
 
 ## Datasets of interest
 * Insurance Coverage.
