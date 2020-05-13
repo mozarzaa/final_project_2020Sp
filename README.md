@@ -42,13 +42,13 @@ Function: read_cpi_by_year()
 Function: merging_dataframes_on_years_plus_correlations()
 Function: spawn_line_plot_from_dataframe()
 Function: spawn_choropleth_from_dataframe()
-	*Built to be reusable functions that work with most dataframes created by the processes above.
+	* Built to be reusable functions that work with most dataframes created by the processes above.
 -	presentation_caller.ipynb
-	*Creation and maintaining of the file helped with envisioning how we wanted our project to go next. What we want to show people, and how we're going to achieve that. This part in a way guided our designs in central_analysis.py
-	*Since I was not yet fluent with doctests at the moment, I also utilized this notebook file to test functions written in central_analysis.py. Additionally, several visualization ideas were inspired by the usage of this file.
+	* Creation and maintaining of the file helped with envisioning how we wanted our project to go next. What we want to show people, and how we're going to achieve that. This part in a way guided our designs in central_analysis.py
+	* Since Vel was not yet fluent with doctests at the moment, he also utilized this notebook file to test functions written in central_analysis.py. Additionally, several visualization ideas were quite inspired by the usage of this file.
 -	Travis CI components
-	*environment.yml
-	*.travis.yml
+	* environment.yml
+	* .travis.yml
 
 
 ## Datasets of interest
