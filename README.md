@@ -12,7 +12,7 @@
  4)Automated testing using TravisCI
 
 * Yuttawee Kongtananan: 
- 1)Household revenue and CPI data cleaning
+ 1)Household revenue, Household expenses, and CPI data cleaning
  2)Doctests
  3)Findings and Analysis of outcome
 
