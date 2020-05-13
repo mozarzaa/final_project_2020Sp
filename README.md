@@ -10,6 +10,7 @@
  2)Data visualization
  3)The functions of correlation
  4)Automated testing using TravisCI
+ 5)Integrating the team's codes
 
 * Yuttawee Kongtananan: 
  1)Household revenue, Household expenses, and CPI data cleaning
