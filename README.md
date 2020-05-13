@@ -14,7 +14,7 @@
 * Yuttawee Kongtananan: 
  1)Household revenue, Household expenses, and CPI data cleaning
  2)Doctests
- 3)Findings and Analysis of outcome
+ 3)Findings and Analysis, Conclusion, and Limitations of outcome
 
 * Eva (Yi-Ting) Huang:
  1)The proposal for project and hypothesis design
