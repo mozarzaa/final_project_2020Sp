@@ -4,6 +4,22 @@
 * Vel (Tien-Yun) Wu (GitHub ID: velwu)
 * Eva (Yi-Ting) Huang (GitHub ID: iameva62948)
 
+### Work Distribution:
+* Vel (Tien-Yun) Wu:
+Healthcare insurance data cleaning
+Data visualization
+The functions of correlation
+Automated testing using TravisCI
+
+* Yuttawee Kongtananan: 
+Household revenue and CPI data cleaning
+Doctests
+Findings and Analysis of outcome
+
+* Eva (Yi-Ting) Huang:
+The proposal for project and hypothesis design
+Unemployment data cleaning
+The Cython for optimization
 
 ## Datasets of interest
 * Insurance Coverage.
