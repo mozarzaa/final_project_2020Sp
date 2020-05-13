@@ -10,6 +10,39 @@
  2)Data visualization
  3)The functions of correlation
  4)Automated testing using TravisCI
+ 
+ Work log 590PR Finals
+Vel (Tien-Yun) Wu
+-	data_exploration.ipynb
+o	Creation and maintaining of this file
+	Data reading/cleaning of HIC-4. Health Insurance Coverage Status and Type of Coverage by State--All Persons: 2008 to 2018
+	First version of stacked line plot
+•	This template would then be utilized by fellow team members to build line plots for other datasets
+-	central_analysis.py
+o	Creation and maintaining of this file
+	Dictionary: states_and_their_abbreviations
+	Function: read_unemployment_by_year()
+•	Built on Eva (Yi-Ting)’s data_exploration_2.ipynb
+	Function: read_health_care_coverage_by_year()
+•	Built from my own data_exploration.ipynb
+	Function: read_household_income_by_year()
+•	Imported from Yuttawee’s Household_Income.ipynb
+	Function: read_household_income_by_year_ver2()
+•	Imported from Yuttawee’s Household_Income2.ipynb
+	Function: read_cpi_by_year()
+•	Also from Yuttawee’s Household_Income2.ipynb
+	I will also comment that the process of transforming functions from the 2 Household_Income files was quite pleasant as the functions therein were well written, easy to read, and easy to assign parameters for.
+	Function: merging_dataframes_on_years_plus_correlations()
+	Function: spawn_line_plot_from_dataframe()
+	Function: spawn_choropleth_from_dataframe()
+•	Built to be reusable functions that work with most dataframes created by the processes above.
+-	presentation_caller.ipynb
+o	Creation and maintaining of the file
+o	Since I was not yet fluent with doctests at the moment, I also utilized this notebook file to test functions written in central_analysis.py. Additionally, several visualization ideas were inspired by the usage of this file.
+-	Travis CI components
+o	environment.yml
+o	.travis.yml
+-	Assisting with some minor parts of Doctests. This part is mostly overseenby Yuttawee
 
 * Yuttawee Kongtananan: 
  1)Household revenue, Household expenses, and CPI data cleaning
