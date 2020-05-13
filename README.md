@@ -10,7 +10,19 @@
  2)Data visualization
  3)The functions of correlation
  4)Automated testing using TravisCI
- 
+
+* Yuttawee Kongtananan: 
+ 1)Household revenue, Household expenses, and CPI data cleaning
+ 2)Doctests
+ 3)Findings and Analysis, Conclusion, and Limitations of outcome
+
+* Eva (Yi-Ting) Huang:
+ 1)The proposal for project and hypothesis design
+ 2)Unemployment data cleaning
+ 3)The Cython for optimization
+
+
+An additional log of each file associated to better illustrate how we distributed our work throughout the project.
 -	data_exploration.ipynb
 	* Data reading/cleaning of HIC-4. Health Insurance Coverage Status and Type of Coverage by State--All Persons: 2008 to 2018
 	* First version of stacked line plot
@@ -26,29 +38,17 @@ Function: read_household_income_by_year_ver2()
 	*Imported from Yuttawee’s Household_Income2.ipynb
 Function: read_cpi_by_year()
 	*Also from Yuttawee’s Household_Income2.ipynb
-
-I will also comment that the process of transforming functions from the 2 Household_Income files was quite pleasant as the functions therein were well written, easy to read, and easy to assign parameters for.
 Function: merging_dataframes_on_years_plus_correlations()
 Function: spawn_line_plot_from_dataframe()
 Function: spawn_choropleth_from_dataframe()
 	*Built to be reusable functions that work with most dataframes created by the processes above.
 -	presentation_caller.ipynb
-o	Creation and maintaining of the file
+o	Creation and maintaining of the file helped with envisioning how we wanted our project to go next. What we want to show people, and how we're going to achieve that. This part in a way guided our designs in central_analysis.py
 o	Since I was not yet fluent with doctests at the moment, I also utilized this notebook file to test functions written in central_analysis.py. Additionally, several visualization ideas were inspired by the usage of this file.
 -	Travis CI components
 o	environment.yml
 o	.travis.yml
--	Assisting with some minor parts of Doctests. This part is mostly overseenby Yuttawee
 
-* Yuttawee Kongtananan: 
- 1)Household revenue, Household expenses, and CPI data cleaning
- 2)Doctests
- 3)Findings and Analysis, Conclusion, and Limitations of outcome
-
-* Eva (Yi-Ting) Huang:
- 1)The proposal for project and hypothesis design
- 2)Unemployment data cleaning
- 3)The Cython for optimization
 
 ## Datasets of interest
 * Insurance Coverage.
