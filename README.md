@@ -7,7 +7,7 @@
 ## Work Distribution:
 * Vel (Tien-Yun) Wu:
  1)Healthcare insurance data cleaning
- 2)Data visualization
+ 2)Data visualization functions
  3)The functions of correlation
  4)Automated testing using TravisCI
  5)Integrating the team's codes
@@ -32,7 +32,7 @@ An additional log of important files to better illustrate how we did our work th
 * Function: read_unemployment_by_year()
 	* Built on Eva (Yi-Ting)’s data_exploration_2.ipynb
 * Function: read_health_care_coverage_by_year()
-	* Built from my own data_exploration.ipynb
+	* Built from Vel's own data_exploration.ipynb
 * Function: read_household_income_by_year()
 	* Imported from Yuttawee’s Household_Income.ipynb
 * Function: read_household_income_by_year_ver2()
