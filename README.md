@@ -4,7 +4,7 @@
 * Vel (Tien-Yun) Wu (GitHub ID: velwu)
 * Eva (Yi-Ting) Huang (GitHub ID: iameva62948)
 
-### Work Distribution:
+## Work Distribution:
 * Vel (Tien-Yun) Wu:
  1)Healthcare insurance data cleaning
  2)Data visualization
@@ -34,11 +34,11 @@ Function: read_unemployment_by_year()
 Function: read_health_care_coverage_by_year()
 	* Built from my own data_exploration.ipynb
 Function: read_household_income_by_year()
-	*Imported from Yuttawee’s Household_Income.ipynb
+	* Imported from Yuttawee’s Household_Income.ipynb
 Function: read_household_income_by_year_ver2()
-	*Imported from Yuttawee’s Household_Income2.ipynb
+	* Imported from Yuttawee’s Household_Income2.ipynb
 Function: read_cpi_by_year()
-	*Also from Yuttawee’s Household_Income2.ipynb
+	* Also from Yuttawee’s Household_Income2.ipynb
 Function: merging_dataframes_on_years_plus_correlations()
 Function: spawn_line_plot_from_dataframe()
 Function: spawn_choropleth_from_dataframe()
