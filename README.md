@@ -22,7 +22,7 @@
  3)The Cython for optimization
 
 
-An additional log of each file associated to better illustrate how we distributed our work throughout the project.
+An additional log of important files to better illustrate how we did our work throughout the project.
 -	data_exploration.ipynb
 	* Data reading/cleaning of HIC-4. Health Insurance Coverage Status and Type of Coverage by State--All Persons: 2008 to 2018
 	* First version of stacked line plot
@@ -43,11 +43,11 @@ Function: spawn_line_plot_from_dataframe()
 Function: spawn_choropleth_from_dataframe()
 	*Built to be reusable functions that work with most dataframes created by the processes above.
 -	presentation_caller.ipynb
-o	Creation and maintaining of the file helped with envisioning how we wanted our project to go next. What we want to show people, and how we're going to achieve that. This part in a way guided our designs in central_analysis.py
-o	Since I was not yet fluent with doctests at the moment, I also utilized this notebook file to test functions written in central_analysis.py. Additionally, several visualization ideas were inspired by the usage of this file.
+	*Creation and maintaining of the file helped with envisioning how we wanted our project to go next. What we want to show people, and how we're going to achieve that. This part in a way guided our designs in central_analysis.py
+	*Since I was not yet fluent with doctests at the moment, I also utilized this notebook file to test functions written in central_analysis.py. Additionally, several visualization ideas were inspired by the usage of this file.
 -	Travis CI components
-o	environment.yml
-o	.travis.yml
+	*environment.yml
+	*.travis.yml
 
 
 ## Datasets of interest
