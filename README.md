@@ -29,19 +29,19 @@ An additional log of important files to better illustrate how we did our work th
 	* First version of stacked line plot
 -	central_analysis.py
 	* Dictionary: states_and_their_abbreviations
-Function: read_unemployment_by_year()
+* Function: read_unemployment_by_year()
 	* Built on Eva (Yi-Ting)’s data_exploration_2.ipynb
-Function: read_health_care_coverage_by_year()
+* Function: read_health_care_coverage_by_year()
 	* Built from my own data_exploration.ipynb
-Function: read_household_income_by_year()
+* Function: read_household_income_by_year()
 	* Imported from Yuttawee’s Household_Income.ipynb
-Function: read_household_income_by_year_ver2()
+* Function: read_household_income_by_year_ver2()
 	* Imported from Yuttawee’s Household_Income2.ipynb
-Function: read_cpi_by_year()
+* Function: read_cpi_by_year()
 	* Also from Yuttawee’s Household_Income2.ipynb
-Function: merging_dataframes_on_years_plus_correlations()
-Function: spawn_line_plot_from_dataframe()
-Function: spawn_choropleth_from_dataframe()
+* Function: merging_dataframes_on_years_plus_correlations()
+* Function: spawn_line_plot_from_dataframe()
+* Function: spawn_choropleth_from_dataframe()
 	* Built to be reusable functions that work with most dataframes created by the processes above.
 -	presentation_caller.ipynb
 	* Creation and maintaining of the file helped with envisioning how we wanted our project to go next. What we want to show people, and how we're going to achieve that. This part in a way guided our designs in central_analysis.py
